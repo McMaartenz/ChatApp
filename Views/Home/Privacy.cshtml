@@ -1,6 +1,41 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+	string currentSettingsOptional = "";
+	string useCookies = (string?)ViewData["useCookies"] ?? "";
+	if (useCookies != "")
+	{
+		currentSettingsOptional = "Your current setting is: " + useCookies;
+	}
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<h1>GDPR</h1>
+<div id="gdpr">
+	<p>
+		Your privacy is important to us. This Privacy Policy explains how we collect, use, disclose, and protect your personal information when you use our services. By using our services, you consent to our collection, use, and disclosure of your personal information as described in this Privacy Policy.
+	</p>
+	<div id="change-gdpr">
+		<button id="update-gdpr" class="btn btn-outline-primary">Update my settings</button>
+		<div>
+			Here you may update your stored cookies settings. <span id="current-gdpr-setting">@currentSettingsOptional</span>
+			<div>
+				<button id="accept" class="btn btn-primary">Accept</button>
+				<button id="refuse" class="btn btn-outline-secondary">Refuse</button>
+			</div>
+		</div>
+	</div>
+	<p>
+		<b><span>&sect;</span> 1 Data collection</b><br />
+		We collect personal information from you when you use our services, including your name, email address, and contact information. We may also collect information about your use of our services and website, such as your IP address, browser type, and usage data. We use this information to provide and improve our services, and to communicate with you about our services and updates.
+	</p>
+	<p>
+		<b><span>&sect;</span> 2 Third-Party sharing</b><br />
+		We may share your personal information with third-party service providers who assist us with our services, such as hosting, data analysis, and customer service. We may also share your personal information as required by law, such as in response to a court order or other legal requirement.
+	</p>
+	<p>
+		<b><span>&sect;</span> 3 Collection & use</b><br />
+		We protect your personal information using reasonable administrative, technical, and physical measures. We retain your personal information only as long as necessary to provide our services, or as required by law.
+	</p>
+	<p>
+		<b><span>&sect;</span> 4 Protection</b><br />
+		If you have any questions or concerns about our Privacy Policy or our use of your personal information, please <a asp-area="" asp-controller="Home" asp-action="Contact">send an inquiry here</a>.
+	</p>
+</div>

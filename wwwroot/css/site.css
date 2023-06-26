@@ -101,3 +101,59 @@ body {
         grid-template-columns: repeat(3, 1fr);
     }
 }
+
+/* GDPR */
+#gdpr span {
+    --font-size: 1em;
+}
+
+#gdpr b {
+    text-transform: uppercase;
+    color: #111;
+}
+
+#gdpr p {
+    color: #666;
+}
+
+#change-gdpr {
+    margin: 1em 0;
+}
+
+#change-gdpr div {
+    margin-top: 1em;
+    padding: 4px;
+
+    border: 1px solid crimson;
+    border-radius: 7px;
+    
+    background-color: mistyrose;
+}
+
+#change-gdpr div div {
+    border: none;
+    padding: 0;
+
+    gap: 4px;
+    display: flex;
+    flex-direction: column;
+    margin: unset;
+}
+
+#change-gdpr #accept,
+#change-gdpr #refuse {
+    width: 100%;
+    height: 48px;
+}
+
+@media (min-width: 768px) {
+    #change-gdpr #accept,
+    #change-gdpr #refuse {
+        width: unset;
+        height: unset;
+    }
+
+    #change-gdpr div div {
+        flex-direction: row;
+    }
+}

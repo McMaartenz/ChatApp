@@ -27,13 +27,31 @@ if (useCookies) {
     $('#cookie-bar').hide();
 }
 
-// Bind click handlers
-$('#cookie-bar #accept').click((e) => {
-    $('#cookie-bar').fadeOut();
-    setCookie('gdpr', 'accept', 365);
-});
+// GDPR functions
+const updateSetting = (value) => {
+    $('#current-gdpr-setting').html('Your current setting is: ' + value);
+};
 
-$('#cookie-bar #refuse').click((e) => { 
+const accept = (_) => {
+    setCookie('gdpr', 'accept', 365);
     $('#cookie-bar').fadeOut();
+    updateSetting('accept');
+};
+
+const refuse = (_) => {
     setCookie('gdpr', 'refuse', 1);
-});
+    $('#cookie-bar').fadeOut();
+    updateSetting('refuse');
+};
+
+// Bind click handlers
+$('#cookie-bar #accept').click(accept);
+$('#cookie-bar #refuse').click(refuse);
+
+$('#change-gdpr #accept').click(accept);
+$('#change-gdpr #refuse').click(refuse);
+
+$('#change-gdpr div').hide();
+$('#update-gdpr').click((e) => {
+    $('#change-gdpr div').fadeToggle();
+})

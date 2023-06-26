@@ -18,6 +18,7 @@ namespace ChatApp.Controllers
             ViewResult result = base.View();
             
             result.ViewData["requestCount"] = Request.Cookies["requestCount"] ?? "0";
+            result.ViewData["useCookies"] = Request.Cookies["gdpr"] ?? "";
             return result;
         }
 
