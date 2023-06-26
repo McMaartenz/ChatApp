@@ -82,19 +82,23 @@ button.accept-policy {
     gap: 15px;
 }
 
+
+#cookie-bar div {
+    justify-content: flex-start;
+    height: 36%;
+}
+
+#cookie-bar div .btn {
+    width: 100%;
+}
+
 @media (min-width: 768px) {
     #cookie-bar div {
         justify-content: center;
-    }
-}
-
-@media (max-width: 767px) {
-    #cookie-bar div {
-        justify-content: flex-start;
-        height: 36%;
+        height: auto;
     }
 
     #cookie-bar div .btn {
-        width: 100%;
+        width: auto;
     }
 }
