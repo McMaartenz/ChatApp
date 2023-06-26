@@ -4,7 +4,8 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "GOOGLE_CAPTCHA_KEY": "6LcZ7oIkAAAAACR5rwWDAaBsymytZF2Z8tmlJoWU"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7290;http://localhost:5246"

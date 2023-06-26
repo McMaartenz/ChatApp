@@ -1,4 +1,5 @@
 ﻿using ChatApp.Models;
+using ChatApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
@@ -46,16 +47,22 @@ namespace ChatApp.Controllers
 					TempData["error:captcha"] = GetErrorsFor("Captcha");
 					return View(ContactPageURL, inquiry);
 				}
+
+				if (!Captcha.IsValid(inquiry.Captcha))
+				{
+					TempData["error:captcha"] = "Captcha ontbreekt";
+					return View(ContactPageURL, inquiry);
+				}
+
+				// Use DB
+
+				// Use API
 			}
 			catch
 			{
 				TempData["exception"] = true;
 				return View(ContactPageURL, inquiry);
 			}
-
-			// Use DB
-
-			// Use API
 
 			TempData["success"] = true;
 			return View(ContactPageURL, inquiry);
