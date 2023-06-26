@@ -157,3 +157,67 @@ body {
         flex-direction: row;
     }
 }
+
+/* Contact form */
+#inputs {
+    display: grid;
+    --grid-template-columns: repeat(1, 1fr);
+}
+
+input, textarea {
+    border: 1px solid gray;
+    border-radius: 5px;
+}
+
+#contact label {
+    text-align: start;
+}
+
+@media (min-width: 768px) {
+    #inputs {
+        grid-template-columns: repeat(1, 1fr 4fr);
+        grid-gap: 15px;
+    }
+}
+
+#recaptcha {
+    margin: 1em 0;
+}
+
+#inputs input, textarea {
+    width: 100%;
+}
+
+#inputs #buttons {
+    display: flex;
+    flex-direction: column;
+    grid-gap: 7px;
+}
+
+#inputs #buttons input:first-child {
+    height: 4rem;
+}
+
+#inputs input[placeholder] {
+    height: 3rem;
+}
+
+#inputs span.error {
+    color: firebrick;
+    font-style: italic;
+}
+
+@media (min-width: 768px) {
+    #inputs #buttons {
+        flex-direction: row;
+    }
+
+    #inputs input[placeholder] {
+        height: unset;
+    }
+
+    #inputs #buttons input {
+        height: 50% !important;
+        margin: auto 0;
+    }
+}

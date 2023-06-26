@@ -2,7 +2,7 @@
 {
     public class Cookies
     {
-        private HttpContext _ctx;
+        private readonly HttpContext _ctx;
 
         public Cookies(HttpContext ctx)
         {

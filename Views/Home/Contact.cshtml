@@ -1,0 +1,67 @@
+﻿@model ChatApp.Models.Inquiry
+
+@{
+
+}
+
+@section scripts {
+	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+	<script>
+		function setRecaptchaResponse() {
+			let response = grecaptcha.getResponse();
+			let el = document.getElementById('g-recaptcha-response');
+			el.value = response;
+			el.name = 'Captcha';
+
+			return response !== "";
+		}
+
+		$('input#topic').val('@Model.Topic');
+		$('input#email').val('@Model.Email');
+		$('input#message').val('@Model.Message');
+	</script>
+}
+
+@using (Html.BeginForm("Send", "Email", FormMethod.Post, new { @id = "contact", @onsubmit = "return setRecaptchaResponse();" }))
+{
+	@Html.AntiForgeryToken()
+	<h1>Neem contact met Maarten op</h1>
+	@if ((bool?)TempData["exception"] ?? false)
+	{
+		<div>interne server error</div>	
+	}
+	@if ((bool?)TempData["success"] ?? false)
+	{
+		<div>Jo it sent</div>
+	}
+	<div id="inputs">
+		<label for="topic">Onderwerp:</label>
+		<div>
+			<input type="text" id="topic" name="Topic" placeholder="Typ een onderwerp...">
+			<span class="error">@(TempData["error:topic"] ?? "")</span>
+		</div>
+
+		<label for="email">Email:</label>
+		<div>
+			<input type="email" id="email" name="Email" placeholder="example@domain.com">
+			<span class="error">@(TempData["error:email"] ?? "")</span>
+		</div>
+
+		<label for="message">Bericht:</label>
+		<div>
+			<textarea id="message" name="Message" rows="9" placeholder="Typ een bericht..."></textarea>
+			<span class="error">@(TempData["error:message"] ?? "")</span>
+		</div>
+
+		<div>
+			<div class="g-recaptcha" id="recaptcha" data-sitekey="6LcZ7oIkAAAAAHjg4KCX7XXJxSd0LeCJcEWwU6tx"></div>
+			@Html.HiddenFor(m => m.Captcha, new {@id = "g-recaptcha-response"})
+			<span class="error">@(TempData["error:captcha"] ?? "")</span>
+		</div>
+
+		<div id="buttons">
+			<input class="btn btn-primary" type="submit" value="Versturen">
+			<input class="btn btn-outline-danger" type="reset" value="Wissen">
+		</div>
+	</div>
+}

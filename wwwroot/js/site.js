@@ -52,6 +52,6 @@ $('#change-gdpr #accept').click(accept);
 $('#change-gdpr #refuse').click(refuse);
 
 $('#change-gdpr div').hide();
-$('#update-gdpr').click((e) => {
+$('#update-gdpr').click((_) => {
     $('#change-gdpr div').fadeToggle();
 })
