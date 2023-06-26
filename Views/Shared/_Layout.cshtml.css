@@ -46,3 +46,39 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+
+/* Cookie-bar */
+#cookie-bar {
+    position: absolute;
+    width: 400px;
+    height: 180px;
+    right: 0;
+    bottom: 0;
+    z-index: 99;
+
+    display: flex;
+    flex-direction: column;
+
+    margin: 7px;
+    padding: 1em;
+    justify-content: center;
+
+    color: #eee;
+    background-color: #041014;
+    border-radius: 15px;
+}
+
+#cookie-bar b {
+    font-size: large;
+}
+
+#cookie-bar p {
+    color: #616161;
+}
+
+#cookie-bar div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 15px;
+}
