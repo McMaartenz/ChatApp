@@ -1,5 +1,6 @@
 using ChatApp.Middlewares;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Moq;
 using Xunit;
 
@@ -64,6 +65,40 @@ namespace Tests
 			Assert.Equal("Append", appendInvocation.Method.Name);
 			Assert.Equal("requestCount", appendInvocation.Arguments[0]);
 			Assert.Equal("1", appendInvocation.Arguments[1]);
+		}
+
+		[Theory]
+		[InlineData(1)]
+		[InlineData(2)]
+		[InlineData(3)]
+		public async void IncreasesRequestCountIfSet(int requestCountData)
+		{
+			Mock<HttpContext> mockHttpContext = new();
+			mockHttpContext.SetupGet(x => x.Request.Cookies["gdpr"]).Returns("accept");
+			mockHttpContext.SetupGet(x => x.Request.Cookies["requestCount"]).Returns(requestCountData.ToString());
+
+			HttpContext? capturedContext = null;
+
+			Task requestDelegate(HttpContext ctx)
+			{
+				capturedContext = ctx;
+				return Task.CompletedTask;
+			}
+
+			Mock<IResponseCookies> mockResponseCookies = new();
+			mockHttpContext.SetupGet(x => x.Response.Cookies).Returns(mockResponseCookies.Object);
+
+			RequestCountMiddleware requestCount = new(requestDelegate);
+			await requestCount.InvokeAsync(mockHttpContext.Object);
+
+			Assert.NotNull(capturedContext);
+
+			Assert.NotEmpty(mockResponseCookies.Invocations);
+			IInvocation appendInvocation = mockResponseCookies.Invocations[0];
+
+			Assert.Equal("Append", appendInvocation.Method.Name);
+			Assert.Equal("requestCount", appendInvocation.Arguments[0]);
+			Assert.Equal($"{requestCountData + 1}", appendInvocation.Arguments[1]);
 		}
 	}
 }
