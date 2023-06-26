@@ -1,6 +1,8 @@
 using ChatApp.Data;
+using ChatApp.Middlewares;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace ChatApp
 {
@@ -36,6 +38,9 @@ namespace ChatApp
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            // Monitor request count using a middleware
+            app.UseMiddleware<RequestCountMiddleware>();
 
             app.UseRouting();
 
