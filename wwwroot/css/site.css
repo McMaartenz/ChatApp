@@ -16,3 +16,49 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* Profile info */
+#profile-info {
+    display: flex;
+    flex-direction: column;
+    margin: 3rem;
+    gap: 2rem;
+}
+
+#profile-info #picture {
+    height: 128px;
+    width: auto;
+}
+
+#profile-info #picture div {
+    height: 100%;
+    width: 128px;
+
+    margin: auto;
+    border-radius: 1.5rem;
+
+    background-image: url('/img/default.webp');
+    background-size: 128px;
+    background-repeat: no-repeat;
+}
+
+#profile-info td {
+    text-align: end;
+}
+
+@media (min-width: 768px) {
+    #profile-info {
+        width: 36%;
+    }
+
+    #profile-info #picture {
+        height: 256px;
+    }
+
+    #profile-info #picture div {
+        height: 256px;
+        width: 256px;
+
+        background-size: 256px;
+    }
+}
