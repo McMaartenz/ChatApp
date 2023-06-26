@@ -4,6 +4,7 @@ namespace ChatApp.Services
 {
 	public sealed class Captcha
 	{
+		private static readonly HttpClient http = new();
 		private static string SecretKey => Environment.GetEnvironmentVariable("GOOGLE_CAPTCHA_KEY")!;
 		private static string API(string token)
 		{
@@ -12,7 +13,6 @@ namespace ChatApp.Services
 
 		public static bool IsValid(string responseToken)
 		{
-			HttpClient http = new();
 			var response = http.GetAsync(API(responseToken)).Result;
 			if (!response.IsSuccessStatusCode)
 			{
