@@ -46,6 +46,41 @@ body {
     text-align: end;
 }
 
+/* About me */
+#profile-info #about-me {
+    padding: 15px;
+
+    border: 1px solid #555;
+    border-radius: 15px;
+
+    background-color: #eee;
+    
+    display: flex;
+    flex-direction: column;
+}
+
+#profile-info #about-me b {
+    font-size: large;
+}
+
+/* Skills */
+#skills b {
+    font-size: large;
+}
+
+#skills ul {
+    margin-top: 18px;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-row-gap: 1em;
+    text-align: center;
+}
+
+#skills i {
+    font-size: 4em;
+}
+
 @media (min-width: 768px) {
     #profile-info {
         width: 36%;
@@ -60,5 +95,9 @@ body {
         width: 256px;
 
         background-size: 256px;
+    }
+
+    #skills ul {
+        grid-template-columns: repeat(3, 1fr);
     }
 }
