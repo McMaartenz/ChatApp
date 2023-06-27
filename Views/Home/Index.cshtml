@@ -51,6 +51,21 @@
         </ul>
     </div>
 </div>
+@if (User.Identity?.IsAuthenticated ?? false)
+{
+    <p>User: @User.Identity.Name;</p>
+
+    <table class="table table-sm">
+        @foreach (var claim in User.Claims)
+        {
+            <tr>
+                <td>@claim.Type</td>
+                <td>@claim.Value</td>
+            </tr>
+        }
+    </table>
+}
+
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>hello</p>
