@@ -7,9 +7,6 @@ namespace ChatApp.Models
 {
 	public class Inquiry
 	{
-		[Key]
-		public int Id { get; set; }
-
 		[Required(ErrorMessage = "Onderwerp ontbreekt")]
 		[StringLength(200, ErrorMessage = "Onderwerp te lang")]
 		public string Topic { get; set; }
