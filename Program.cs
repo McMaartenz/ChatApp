@@ -27,6 +27,7 @@ namespace ChatApp
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddControllersWithViews();
@@ -40,7 +41,14 @@ namespace ChatApp
 			IMapper mapper = mapperConfig.CreateMapper();
 			builder.Services.AddSingleton(mapper);
 
-			var app = builder.Build();
+            // Role/Policies
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAdmin", policy => policy.RequireRole("Administrator"));
+                options.AddPolicy("RequireChatMod", policy => policy.RequireRole("ChatModerator"));
+            });
+
+            var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
