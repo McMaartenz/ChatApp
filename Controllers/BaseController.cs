@@ -7,7 +7,6 @@ using System.Diagnostics;
 
 namespace ChatApp.Controllers
 {
-	[AllowAnonymous]
 	public class BaseController : Controller
 	{
 		protected readonly SignInManager<ApplicationUser> _signInManager;

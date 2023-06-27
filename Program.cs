@@ -42,7 +42,7 @@ namespace ChatApp
 			builder.Services.AddSingleton(mapper);
 
             // Role/Policies
-            builder.Services.AddAuthorization(options =>
+            builder.Services.AddAuthorizationCore(options =>
             {
                 options.AddPolicy("RequireAdmin", policy => policy.RequireRole("Administrator"));
                 options.AddPolicy("RequireChatMod", policy => policy.RequireRole("ChatModerator"));
@@ -66,21 +66,20 @@ namespace ChatApp
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            
             app.UseAuthentication();
             app.UseAuthorization();
 
             // Monitor request count using a middleware
             app.UseMiddleware<RequestCountMiddleware>();
 
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
-            
-            app.MapControllerRoute(
-                name: "chatapp",
-                pattern: "{controller=Chat}/{action=Index}/{id?}");
-            
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
+
             app.MapRazorPages();
 
             app.Run();
