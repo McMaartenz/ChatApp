@@ -50,9 +50,7 @@
             <li><i class="devicon-ruby-plain"></i></li>
         </ul>
     </div>
-</div>
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>hello</p>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <form class="form-inline" asp-controller="Home" asp-action="Chat" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+        <button type="submit" class="btn btn-outline-primary">Join the chat</button>
+    </form>
 </div>

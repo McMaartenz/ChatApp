@@ -251,3 +251,14 @@ input, textarea {
         margin-left: 0;
     }
 }
+
+#profile-info form button {
+    height: 5rem;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    #profile-info form button {
+        height: 3rem;
+    }
+}
