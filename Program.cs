@@ -1,3 +1,4 @@
+using AutoMapper;
 using ChatApp.Data;
 using ChatApp.Middlewares;
 using Microsoft.AspNetCore.Identity;
@@ -29,7 +30,16 @@ namespace ChatApp
 
             builder.Services.AddControllersWithViews();
 
-            var app = builder.Build();
+            // Mapper
+			var mapperConfig = new MapperConfiguration(config =>
+			{
+				config.AddProfile(new MappingProfile());
+			});
+
+			IMapper mapper = mapperConfig.CreateMapper();
+			builder.Services.AddSingleton(mapper);
+
+			var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

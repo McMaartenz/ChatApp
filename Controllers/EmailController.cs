@@ -1,4 +1,6 @@
-﻿using ChatApp.Models;
+﻿using AutoMapper;
+using ChatApp.Data;
+using ChatApp.Models;
 using ChatApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -11,12 +13,17 @@ namespace ChatApp.Controllers
 		private readonly ILogger<EmailController> _logger;
 		private const string ContactPageURL = "~/Views/Home/Contact.cshtml";
 
-		public EmailController(ILogger<EmailController> logger) : base(logger)
+		private readonly InquiryDbCtx _inquiryDbCtx;
+		private readonly IMapper _mapper;
+
+		public EmailController(ILogger<EmailController> logger, InquiryDbCtx inquiryDbCtx, IMapper mapper) : base(logger)
 		{
 			_logger = logger;
+			_inquiryDbCtx = inquiryDbCtx;
+			_mapper = mapper;
 		}
 
-		public IActionResult Send(Inquiry inquiry)
+		public async Task<IActionResult> Send(Inquiry inquiry)
 		{
 			TempData["exception"] = false;
 			TempData["success"] = false;
@@ -54,9 +61,15 @@ namespace ChatApp.Controllers
 					return View(ContactPageURL, inquiry);
 				}
 
+				// Map to inquiry entity
+				Data.Entities.Inquiry dataInquiry = _mapper.Map<Data.Entities.Inquiry>(inquiry);
+
 				// Use DB
+				await _inquiryDbCtx.AddAsync(dataInquiry);
+				await _inquiryDbCtx.SaveChangesAsync();
 
 				// Use API
+
 			}
 			catch
 			{
