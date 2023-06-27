@@ -65,17 +65,22 @@ namespace ChatApp
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            // Monitor request count using a middleware
-            app.UseMiddleware<RequestCountMiddleware>();
-
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // Monitor request count using a middleware
+            app.UseMiddleware<RequestCountMiddleware>();
+
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+            
+            app.MapControllerRoute(
+                name: "chatapp",
+                pattern: "{controller=Chat}/{action=Index}/{id?}");
+            
             app.MapRazorPages();
 
             app.Run();
