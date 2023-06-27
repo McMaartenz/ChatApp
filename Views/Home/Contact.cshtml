@@ -1,7 +1,9 @@
 ﻿@model ChatApp.Models.Inquiry
 
 @{
-
+	string email = Model?.Email
+		?? (string?)TempData["user:email"] /* Autofill account email if logged in */
+		?? "";
 }
 
 @section scripts {
@@ -18,7 +20,7 @@
 
 		$(() => {
 			$('input#topic').val('@(Model?.Topic ?? "")');
-			$('input#email').val('@(Model?.Email ?? "")');
+			$('input#email').val('@email');
 			$('textarea#message').text('@(Model?.Message ?? "")');
 		})
 	</script>

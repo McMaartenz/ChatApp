@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using ChatApp.Areas.Identity.Data;
 using ChatApp.Data;
 using ChatApp.Models;
 using ChatApp.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
@@ -16,7 +18,12 @@ namespace ChatApp.Controllers
 		private readonly InquiryDbCtx _inquiryDbCtx;
 		private readonly IMapper _mapper;
 
-		public EmailController(ILogger<EmailController> logger, InquiryDbCtx inquiryDbCtx, IMapper mapper) : base(logger)
+		public EmailController(
+			UserManager<ApplicationUser> userManager,
+			SignInManager<ApplicationUser> signInManager,
+			ILogger<EmailController> logger,
+			InquiryDbCtx inquiryDbCtx,
+			IMapper mapper) : base(userManager, signInManager, logger)
 		{
 			_logger = logger;
 			_inquiryDbCtx = inquiryDbCtx;

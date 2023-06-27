@@ -1,4 +1,6 @@
-﻿using ChatApp.Models;
+﻿using ChatApp.Areas.Identity.Data;
+using ChatApp.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -8,7 +10,11 @@ namespace ChatApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger) : base(logger)
+        public HomeController(
+            UserManager<ApplicationUser> userManager,
+			SignInManager<ApplicationUser> signInManager, 
+            ILogger<HomeController> logger)
+            : base(userManager, signInManager, logger)
         {
             _logger = logger;
         }

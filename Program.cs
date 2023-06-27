@@ -1,4 +1,5 @@
 using AutoMapper;
+using ChatApp.Areas.Identity.Data;
 using ChatApp.Data;
 using ChatApp.Middlewares;
 using Microsoft.AspNetCore.Identity;
@@ -25,8 +26,8 @@ namespace ChatApp
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<InquiryDbCtx>();
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddControllersWithViews();
 

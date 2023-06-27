@@ -1,16 +1,27 @@
-﻿using ChatApp.Models;
+﻿using ChatApp.Areas.Identity.Data;
+using ChatApp.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace ChatApp.Controllers
 {
-    public class BaseController : Controller
-    {
-        private readonly ILogger<BaseController> _logger;
+	[AllowAnonymous]
+	public class BaseController : Controller
+	{
+		private readonly SignInManager<ApplicationUser> _signInManager;
+		private readonly UserManager<ApplicationUser> _userManager;
+		private readonly ILogger<BaseController> _logger;
 
-        public BaseController(ILogger<BaseController> logger)
+        public BaseController(
+            UserManager<ApplicationUser> userManager,
+			SignInManager<ApplicationUser> signInManager, 
+            ILogger<BaseController> logger)
         {
             _logger = logger;
+            _signInManager = signInManager;
+            _userManager = userManager;
         }
 
         private ViewResult SetCookies(ViewResult result)
