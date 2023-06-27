@@ -40,7 +40,7 @@ namespace Tests
 			await _middleware.InvokeAsync(_mockHttpCtx.Object);
 
 			// Assert
-			Assert.Empty(_mockResponseCookies.Invocations);
+			_mockResponseCookies.Verify(x => x.Append("requestCount", It.IsAny<string>(), It.IsAny<CookieOptions>()), Times.Never);
 		}
 
 		[Fact]
@@ -55,12 +55,7 @@ namespace Tests
 			await _middleware.InvokeAsync(_mockHttpCtx.Object);
 
 			// Assert
-			Assert.NotEmpty(_mockResponseCookies.Invocations);
-			IInvocation appendInvocation = _mockResponseCookies.Invocations[0];
-
-			Assert.Equal("Append", appendInvocation.Method.Name);
-			Assert.Equal("requestCount", appendInvocation.Arguments[0]);
-			Assert.Equal("1", appendInvocation.Arguments[1]);
+			_mockResponseCookies.Verify(x => x.Append("requestCount", "1", It.IsAny<CookieOptions>()), Times.Once);
 		}
 
 		[Theory]
@@ -78,12 +73,7 @@ namespace Tests
 			await _middleware.InvokeAsync(_mockHttpCtx.Object);
 
 			// Assert
-			Assert.NotEmpty(_mockResponseCookies.Invocations);
-			IInvocation appendInvocation = _mockResponseCookies.Invocations[0];
-
-			Assert.Equal("Append", appendInvocation.Method.Name);
-			Assert.Equal("requestCount", appendInvocation.Arguments[0]);
-			Assert.Equal($"{requestCountData + 1}", appendInvocation.Arguments[1]);
+			_mockResponseCookies.Verify(x => x.Append("requestCount", $"{requestCountData + 1}", It.IsAny<CookieOptions>()), Times.Once);
 		}
 	}
 }
