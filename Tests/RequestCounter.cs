@@ -8,59 +8,55 @@ namespace Tests
 {
 	public class RequestCounter
 	{
+		private readonly Mock<HttpContext> _mockHttpCtx;
+		private readonly Mock<IResponseCookies> _mockResponseCookies;
+		private readonly RequestCountMiddleware _middleware;
+
+		// Setup
+		public RequestCounter()
+		{
+			_mockHttpCtx = new();
+			_mockResponseCookies = new();
+			_middleware = new(RequestDelegate);
+		}
+
+		private Task RequestDelegate(HttpContext ctx)
+		{
+			return Task.CompletedTask;
+		}
+
 		[Theory]
 		[InlineData("refuse")]
 		[InlineData("")]
 		[InlineData((string)null)]
 		public async void NotTrackedIfGdprRefused(string gdprString)
 		{
-			Mock<HttpContext> mockHttpContext = new();
-			mockHttpContext.SetupGet(x => x.Request.Cookies["gdpr"]).Returns(gdprString);
-			mockHttpContext.SetupGet(x => x.Request.Cookies["requestCount"]).Returns((string)null);
+			// Arrange
+			_mockHttpCtx.SetupGet(x => x.Request.Cookies["gdpr"]).Returns(gdprString);
+			_mockHttpCtx.SetupGet(x => x.Request.Cookies["requestCount"]).Returns((string)null);
+			_mockHttpCtx.SetupGet(x => x.Response.Cookies).Returns(_mockResponseCookies.Object);
 
-			HttpContext? capturedContext = null;
+			// Act
+			await _middleware.InvokeAsync(_mockHttpCtx.Object);
 
-			Task requestDelegate(HttpContext ctx)
-			{
-				capturedContext = ctx;
-				return Task.CompletedTask;
-			}
-
-			Mock<IResponseCookies> mockResponseCookies = new();
-			mockHttpContext.SetupGet(x => x.Response.Cookies).Returns(mockResponseCookies.Object);
-
-			RequestCountMiddleware requestCount = new(requestDelegate);
-			await requestCount.InvokeAsync(mockHttpContext.Object);
-
-			Assert.NotNull(capturedContext);
-			Assert.Empty(mockResponseCookies.Invocations);
+			// Assert
+			Assert.Empty(_mockResponseCookies.Invocations);
 		}
 
 		[Fact]
 		public async void IfNoneProvidesOne()
 		{
-			Mock<HttpContext> mockHttpContext = new();
-			mockHttpContext.SetupGet(x => x.Request.Cookies["gdpr"]).Returns("accept");
-			mockHttpContext.SetupGet(x => x.Request.Cookies["requestCount"]).Returns((string)null);
-			
-			HttpContext? capturedContext = null;
+			// Arrange
+			_mockHttpCtx.SetupGet(x => x.Request.Cookies["gdpr"]).Returns("accept");
+			_mockHttpCtx.SetupGet(x => x.Request.Cookies["requestCount"]).Returns((string)null);
+			_mockHttpCtx.SetupGet(x => x.Response.Cookies).Returns(_mockResponseCookies.Object);
 
-			Task requestDelegate(HttpContext ctx)
-			{
-				capturedContext = ctx;
-				return Task.CompletedTask;
-			}
+			// Act
+			await _middleware.InvokeAsync(_mockHttpCtx.Object);
 
-			Mock<IResponseCookies> mockResponseCookies = new();
-			mockHttpContext.SetupGet(x => x.Response.Cookies).Returns(mockResponseCookies.Object);
-
-			RequestCountMiddleware requestCount = new(requestDelegate);
-			await requestCount.InvokeAsync(mockHttpContext.Object);
-
-			Assert.NotNull(capturedContext);
-
-			Assert.NotEmpty(mockResponseCookies.Invocations);
-			IInvocation appendInvocation = mockResponseCookies.Invocations[0];
+			// Assert
+			Assert.NotEmpty(_mockResponseCookies.Invocations);
+			IInvocation appendInvocation = _mockResponseCookies.Invocations[0];
 
 			Assert.Equal("Append", appendInvocation.Method.Name);
 			Assert.Equal("requestCount", appendInvocation.Arguments[0]);
@@ -73,28 +69,17 @@ namespace Tests
 		[InlineData(3)]
 		public async void IncreasesRequestCountIfSet(int requestCountData)
 		{
-			Mock<HttpContext> mockHttpContext = new();
-			mockHttpContext.SetupGet(x => x.Request.Cookies["gdpr"]).Returns("accept");
-			mockHttpContext.SetupGet(x => x.Request.Cookies["requestCount"]).Returns(requestCountData.ToString());
+			// Arrange
+			_mockHttpCtx.SetupGet(x => x.Request.Cookies["gdpr"]).Returns("accept");
+			_mockHttpCtx.SetupGet(x => x.Request.Cookies["requestCount"]).Returns(requestCountData.ToString());
+			_mockHttpCtx.SetupGet(x => x.Response.Cookies).Returns(_mockResponseCookies.Object);
 
-			HttpContext? capturedContext = null;
+			// Act
+			await _middleware.InvokeAsync(_mockHttpCtx.Object);
 
-			Task requestDelegate(HttpContext ctx)
-			{
-				capturedContext = ctx;
-				return Task.CompletedTask;
-			}
-
-			Mock<IResponseCookies> mockResponseCookies = new();
-			mockHttpContext.SetupGet(x => x.Response.Cookies).Returns(mockResponseCookies.Object);
-
-			RequestCountMiddleware requestCount = new(requestDelegate);
-			await requestCount.InvokeAsync(mockHttpContext.Object);
-
-			Assert.NotNull(capturedContext);
-
-			Assert.NotEmpty(mockResponseCookies.Invocations);
-			IInvocation appendInvocation = mockResponseCookies.Invocations[0];
+			// Assert
+			Assert.NotEmpty(_mockResponseCookies.Invocations);
+			IInvocation appendInvocation = _mockResponseCookies.Invocations[0];
 
 			Assert.Equal("Append", appendInvocation.Method.Name);
 			Assert.Equal("requestCount", appendInvocation.Arguments[0]);
