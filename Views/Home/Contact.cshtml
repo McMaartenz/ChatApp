@@ -26,11 +26,11 @@
 {
 	@Html.AntiForgeryToken()
 	<h1>Neem contact met Maarten op</h1>
-	//@if ((bool?)TempData["exception"] ?? false)
+	@if ((bool?)TempData["exception"] ?? false)
 	{
 		<div class="inquiry-toast" id="inquiry-error">Het verzoek kon niet worden verwerkt</div>
 	}
-	//@if ((bool?)TempData["success"] ?? false)
+	@if ((bool?)TempData["success"] ?? false)
 	{
 		<div class="inquiry-toast" id="inquiry-sent">Het verzoek is ingediend</div>
 	}

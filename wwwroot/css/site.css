@@ -221,3 +221,33 @@ input, textarea {
         margin: auto 0;
     }
 }
+
+.inquiry-toast {
+    border: 1px solid black;
+    border-radius: 7px;
+    padding: 4px;
+    margin: 1em auto;
+
+    position: sticky;
+    top: 4px;
+
+    text-align: center;
+    justify-content: center;
+}
+
+#inquiry-error {
+    border-color: crimson;
+    background-color: mistyrose;
+}
+
+#inquiry-sent {
+    border-color: steelblue;
+    background-color: lightblue;
+}
+
+@media (min-width: 768px) {
+    .inquiry-toast {
+        width: 36%;
+        margin-left: 0;
+    }
+}
