@@ -11,7 +11,7 @@ using ChatApp.Areas.Identity.Data;
 
 namespace ChatApp.Areas.Identity.Pages.Admin
 {
-    //[Authorize(Policy = "RequireAdmin")]
+    [Authorize(Policy = "RequireAdmin")]
     public class RolesModel : PageModel
     {
         public RolesModel(UserManager<ApplicationUser> userManager)
@@ -34,6 +34,7 @@ namespace ChatApp.Areas.Identity.Pages.Admin
                 //Redirect to NotFound
                 return RedirectToPage("/");
             }
+
             ApplicationUser user = await UserManager.FindByIdAsync(Id);
             Roles = await UserManager.GetRolesAsync(user);
             return Page();
@@ -54,6 +55,7 @@ namespace ChatApp.Areas.Identity.Pages.Admin
                     }
                 }
             }
+
             Roles = await UserManager.GetRolesAsync(user);
             return RedirectToPage();
         }

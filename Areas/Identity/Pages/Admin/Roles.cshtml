@@ -9,8 +9,8 @@
 <table class="table table-sm table-striped table-bordered">
     <thead>
         <tr>
-            <th>Type</th>
-            <th>Modify</th>
+            <th>Role</th>
+            <th>Delete</th>
         </tr>
     </thead>
     <tbody>
@@ -20,8 +20,11 @@
 
             <tr>
                 <td>@r</td>
+                <form method="post" id=@("deleteForm"+FormId)>
+                    <input type="hidden" name="roleName" value="@r"/>
+                </form>
                 <td>
-                    <button type="submit" form=@("editForm"+FormId)
+                    <button type="submit" form=@("deleteForm"+FormId)
                             class="btn btn-sm btn-danger"
                             asp-page-handler="DeleteRole">
                         Delete
@@ -37,7 +40,7 @@
 <form method="post" id="addForm">
     <div class="row">
         <div class="col">
-            <select class="form-control" name="type">
+            <select class="form-control" name="roleName">
                 <option value="Administrator">Administrator</option>
                 <option value="ChatModerator">Chat moderator</option>
             </select>

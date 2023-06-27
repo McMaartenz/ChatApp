@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace ChatApp.Areas.Identity.Pages.Admin
 {
-    // [Authorize(Policy = "RequireAdmin")]
+    [Authorize(Policy = "RequireAdmin")]
     public class UsersModel : PageModel
     {
         public ApplicationDbContext _dbCtx { get; set; }
