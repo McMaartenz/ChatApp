@@ -16,9 +16,11 @@
 			return response !== "";
 		}
 
-		$('input#topic').val('@(Model?.Topic ?? "")');
-		$('input#email').val('@(Model?.Email ?? "")');
-		$('input#message').val('@(Model?.Message ?? "")');
+		$(() => {
+			$('input#topic').val('@(Model?.Topic ?? "")');
+			$('input#email').val('@(Model?.Email ?? "")');
+			$('textarea#message').text('@(Model?.Message ?? "")');
+		})
 	</script>
 }
 
