@@ -1,0 +1,23 @@
+﻿#chat-page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#chat-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#chat-history {
+    flex: 1;
+    overflow-y: auto;
+}
+
+#chat-bottom {
+    height: auto;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}

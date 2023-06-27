@@ -1,1 +1,21 @@
-﻿<div>hello</div>
+﻿@section scripts {
+    <script>
+	    $('#test-btn').click(() => {
+		    var msg = document.createElement('chat-msg');
+			$(msg.shadowRoot).find('#content').text('test');
+		    $('#chat-history').append(msg);
+			$(msg)[0].scrollIntoView();
+	    });
+    </script>
+}
+
+<div id="chat-page">
+	<div id="chat-history"></div>
+	<div id="chat-bottom">
+		<button class="btn btn-primary" id="test-btn">test</button>
+	</div>
+</div>
+
+<template id="chat-msg">
+	<p id="content"></p>
+</template>
