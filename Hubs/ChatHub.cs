@@ -174,5 +174,20 @@ namespace ChatApp.Hubs
 
 			await Clients.All.SendAsync($"ReceiveMessage-{channelId}", message);
 		}
+
+		public async Task<int> CreateChannel(int userId, string topic)
+		{
+			await VerifyUser(userId);
+
+			Channel channel = new()
+			{
+				Topic = topic,
+			};
+
+			await _chatAppDbCtx.AddAsync(channel);
+			await _chatAppDbCtx.SaveChangesAsync();
+
+			return channel.Id;
+		}
 	}
 }

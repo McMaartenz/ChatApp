@@ -33,7 +33,11 @@ const ChatSystem = (() => {
 
 	const AddMessage = (message) => {
 		var msg = document.createElement('chat-msg');
-		$(msg.shadowRoot).find('#content').text(`${message.user.userName} says ${message.content}`);
+
+		let sr = $(msg.shadowRoot);
+		sr.find('#user').text(message.user.userName);
+		sr.find('#content').text(message.content);
+
 		$('#chat-history').append(msg);
 		$(msg)[0].scrollIntoView();
 	};
@@ -95,6 +99,10 @@ const ChatSystem = (() => {
 	};
 
 	const SetCurrentChannel = async (channelId) => {
+		if (channelId == currentChannelId) {
+			return; // No.
+		}
+
 		await GetChannels();
 		if ($.inArray(channelId, availableChannels) !== -1) {
 			console.log('Switching to channel:', channelId);
@@ -137,6 +145,7 @@ const ChatSystem = (() => {
 	const UpdateChannelList = async () => {
 		if (availableChannels == []) {
 			await GetChannels();
+			await UpdateChannelList();
 		}
 
 		for (const channel of availableChannels) {
@@ -149,6 +158,16 @@ const ChatSystem = (() => {
 			});
 			$(el.shadowRoot).find('#channel-name').text(channelInfo.topic);
 			$('#chat-insert-channels-here').append(el);
+		}
+	};
+
+	const CreateChannel = async (topic) => {
+		try {
+			let id = await connection.invoke('CreateChannel', await GetUserId(), topic);
+			await SetCurrentChannel(id);
+		}
+		catch (e) {
+			console.error(e);
 		}
 	};
 
@@ -165,6 +184,7 @@ const ChatSystem = (() => {
 		/* ASYNC */ GetCurrentChannelInfo,
 		/* ASYNC */ GetChannelInfo,
 		/* ASYNC */ UpdateChannelList,
+		/* ASYNC */ CreateChannel,
 	};
 })();
 
@@ -200,6 +220,11 @@ $('#chat-text-input').on('keypress', (e) => {
 	if (e.which == KEYCODES.ENTER) {
 		$('#chat-text-send').click();
 	}
+});
+
+$('#chat-create-channel').click(() => {
+	let channelTopic = prompt('Channel topic?', 'C++ is better than Rust');
+	ChatSystem.CreateChannel(channelTopic);
 });
 
 $(() => {

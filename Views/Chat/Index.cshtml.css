@@ -148,6 +148,29 @@
     margin-left: 8px;
 }
 
+#chat-create-channel {
+    justify-content: center;
+    display: flex;
+    color: #DFD;
+}
+
+#chat-create-channel div {
+    width: 128px;
+    display: flex;
+    flex-direction: row;
+}
+
+#chat-create-channel div i {
+    margin: auto 0;
+    width: 16px;
+}
+
+#chat-create-channel div p {
+    padding: 0;
+    margin: 0;
+    margin-left: 8px;
+}
+
 #chat-sidebar h2 {
     text-transform: uppercase;
     position: sticky;
@@ -167,7 +190,7 @@
     }
 
     #chat-history {
-        padding-left: 255px;
+        padding-left: 260px;
     }
 }
 /* END Chat Section */

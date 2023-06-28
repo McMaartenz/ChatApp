@@ -8,7 +8,7 @@ namespace ChatApp.Data.Configurations
 	{
 		public void Configure(EntityTypeBuilder<Channel> builder)
 		{
-			builder.Property(x => x.Topic).HasMaxLength(16);
+			builder.Property(x => x.Topic).HasMaxLength(36);
 		}
 	}
 }
