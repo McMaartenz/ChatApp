@@ -1,52 +1,8 @@
 ﻿@section scripts {
+	<script src="~/js/signalr/dist/browser/signalr.js"></script>
+	<script src="~/js/chat.js"></script>
     <script>
-		const KEYCODES = {
-			ENTER: 13
-		};
-
-		const ChatSystem = (() => {
-			let isSideBarOpen = false;
-			const IsSideBarOpen = () => {
-				return isSidebarOpen;
-			};
-
-			const ToggleSideBar = () => {
-				isSideBarOpen = !isSideBarOpen;
-				$("#chat-sidebar").css('left', `${isSideBarOpen*-100}%`);
-			};
-
-			const Send = (input) => {
-				if (input == '') {
-					return false;
-				}
-
-				/* Perform socket code */
-				AddMessage(input);
-				return true;
-			};
-
-			const AddMessage = (input) => {
-				var msg = document.createElement('chat-msg');
-				$(msg.shadowRoot).find('#content').text(input);
-				$('#chat-history').append(msg);
-				$(msg)[0].scrollIntoView();
-			};
-
-			return { Send, AddMessage, IsSideBarOpen, ToggleSideBar };
-		})();
-
 		/* Chat Bottom */
-		$('#chat-text-send').click(() => {
-			if (ChatSystem.Send($('#chat-text-input').val())) {
-				$('#chat-text-input').val('');
-			}
-		});
-
-		$('#chat-text-input').on('keypress', (e) => {
-			if (e.which == KEYCODES.ENTER) {
-				$('#chat-text-send').click();
-			}
-		});
 
 		/* Chat Sidebar */
 

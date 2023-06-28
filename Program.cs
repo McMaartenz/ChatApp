@@ -1,6 +1,7 @@
 using AutoMapper;
 using ChatApp.Areas.Identity.Data;
 using ChatApp.Data;
+using ChatApp.Hubs;
 using ChatApp.Middlewares;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -48,7 +49,10 @@ namespace ChatApp
                 options.AddPolicy("RequireChatMod", policy => policy.RequireRole("ChatModerator"));
             });
 
-            var app = builder.Build();
+            // SignalR
+			builder.Services.AddSignalR();
+
+			var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -81,8 +85,9 @@ namespace ChatApp
             });
 
             app.MapRazorPages();
+			app.MapHub<ChatHub>("/chatHub");
 
-            app.Run();
+			app.Run();
         }
     }
 }
