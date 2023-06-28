@@ -1,18 +1,136 @@
 ﻿@section scripts {
     <script>
-	    $('#test-btn').click(() => {
-		    var msg = document.createElement('chat-msg');
-			$(msg.shadowRoot).find('#content').text('test');
-		    $('#chat-history').append(msg);
-			$(msg)[0].scrollIntoView();
-	    });
+		const KEYCODES = {
+			ENTER: 13
+		};
+
+		const ChatSystem = (() => {
+			let isSideBarOpen = false;
+			const IsSideBarOpen = () => {
+				return isSidebarOpen;
+			};
+
+			const ToggleSideBar = () => {
+				isSideBarOpen = !isSideBarOpen;
+				$("#chat-sidebar").css('left', `${isSideBarOpen*-100}%`);
+			};
+
+			const Send = (input) => {
+				if (input == '') {
+					return false;
+				}
+
+				/* Perform socket code */
+				AddMessage(input);
+				return true;
+			};
+
+			const AddMessage = (input) => {
+				var msg = document.createElement('chat-msg');
+				$(msg.shadowRoot).find('#content').text(input);
+				$('#chat-history').append(msg);
+				$(msg)[0].scrollIntoView();
+			};
+
+			return { Send, AddMessage, IsSideBarOpen, ToggleSideBar };
+		})();
+
+		/* Chat Bottom */
+		$('#chat-text-send').click(() => {
+			if (ChatSystem.Send($('#chat-text-input').val())) {
+				$('#chat-text-input').val('');
+			}
+		});
+
+		$('#chat-text-input').on('keypress', (e) => {
+			if (e.which == KEYCODES.ENTER) {
+				$('#chat-text-send').click();
+			}
+		});
+
+		/* Chat Sidebar */
+
+		/* Chat Header */
+		$('#chat-header-return').click(() => {
+			ChatSystem.ToggleSideBar();
+		})
     </script>
 }
+<link rel="stylesheet"
+	  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div id="chat-page">
+	<div id="chat-header">
+		<button class="btn" id="chat-header-return">
+			<i style="color:#eee" class="fa-solid fa-bars fa-2xl"></i>
+		</button>
+		<div id="chat-header-title">
+			Current Channel Name
+		</div>
+		<button class="btn" id="chat-header-xxx">
+			<!-- data -->
+		</button>
+	</div>
+	<div id="chat-sidebar">
+		<div>
+			<div id="chat-sidebar-channels">
+				<h2>menu</h2>
+				<ul>
+					<li>abcd</li>
+					<li>abcd</li>
+					<li>abcd</li>
+					<li>abcd</li>
+					<li>abcd</li>
+					<li>abcd</li>
+					<li>abcd</li>
+					<li>abcd</li>
+					<li>abcd</li>
+					<li>abcd</li>
+					<li>abcd</li>
+					<li>abcd</li>
+					<li>abcd</li>
+					<li>abcd</li>
+					<li>abcd</li>
+					<li>abcd</li>
+					<li>abcd</li>
+					<li>abcd</li>
+				</ul>
+			</div>
+			<div id="chat-sidebar-options">
+				<hr />
+				<ul>
+					<li>
+						<a class="nav-link text-white" asp-controller="Home" asp-action="Index">
+							<div>
+								<i class="fa-solid fa-house" style="color: #eee;"></i>
+								<p>Home</p>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a class="nav-link text-white" asp-controller="Home" asp-action="Privacy">
+							<div>
+								<i class="fa-solid fa-book" style="color: #eee;"></i>
+								<p>GDPR</p>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a class="nav-link text-white" asp-area="Identity" asp-page="/Account/Manage/Index">
+							<div>
+								<i class="fa-solid fa-user" style="color: #eee;"></i>
+								<p>Account</p>
+							</div>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
 	<div id="chat-history"></div>
 	<div id="chat-bottom">
-		<button class="btn btn-primary" id="test-btn">test</button>
+		<input id="chat-text-input" type="text" placeholder="Send a message..." />
+		<button id="chat-text-send" class="btn btn-primary"><i class="fa-regular fa-paper-plane"></i></button>
 	</div>
 </div>
 
