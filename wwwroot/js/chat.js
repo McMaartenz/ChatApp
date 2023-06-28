@@ -50,6 +50,13 @@ const ChatSystem = (() => {
 
 		sr.find('#main').dblclick((e) => {
 			sr.find('#view-options').click();
+
+			if (window.matchMedia('(min-width: 768px)').matches) {
+				$("#context-menu").css({ top: e.pageY, left: e.pageX });
+			}
+			else {
+				$('#context-menu').css({ top: '25vh', left: '25vw' });
+			}
 			e.preventDefault();
 		});
 

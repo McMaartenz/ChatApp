@@ -241,12 +241,6 @@
 /* END Chat Bottom */
 
 /* START Context Menu */
-@media (min-width: 768px) {
-    #context-menu {
-
-    }
-}
-
 #context-menu-bg {
     position: fixed;
     
@@ -296,5 +290,17 @@
 #context-menu li {
     padding: 1em 0;
 }
+
+@media (min-width: 768px) {
+    #context-menu {
+        width: 12.5vw;
+        height: 22vh;
+    }
+
+    #context-menu li {
+        padding: 0.25em 0;
+    }
+}
+
 
 /* END Context Menu */
