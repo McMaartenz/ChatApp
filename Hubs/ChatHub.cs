@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using System.Collections.Immutable;
+using System.Runtime.CompilerServices;
 
 namespace ChatApp.Hubs
 {
@@ -92,10 +94,85 @@ namespace ChatApp.Hubs
 			return user;
 		}
 
-		public async Task SendMessage(int userId, string message)
+		public async Task<int[]> GetChannels()
+		{
+			int[] channels = await _chatAppDbCtx.Channels.Select(c => c.Id).ToArrayAsync();
+			if (channels.Length > 0)
+			{
+				return channels;
+			}
+
+			Channel channel = new()
+			{
+				Topic = "General"
+			};
+
+			await _chatAppDbCtx.AddAsync(channel);
+			await _chatAppDbCtx.SaveChangesAsync();
+
+			return new int[] { channel.Id };
+		}
+
+		public async Task<Channel?> GetChannel(int channelId)
+		{
+			string cacheKey = $"channelId_{channelId}";
+
+			if (_cache.TryGetValue(cacheKey, out Channel cachedChannel))
+			{
+				return cachedChannel;
+			}
+
+			Channel? channel = await _chatAppDbCtx.Channels.FindAsync(channelId);
+			if (channel is not null)
+			{
+				_cache.Set(cacheKey, channel, TimeSpan.FromMinutes(10));
+			}
+
+			return channel;
+		}
+
+		public async Task<Message[]> GetLastMessages(int channelId)
+		{
+			Channel? channel = await _chatAppDbCtx.Channels.FindAsync(channelId);
+			if (channel is null)
+			{
+				return Array.Empty<Message>();
+			}
+
+			Message[] messages = await _chatAppDbCtx.Messages
+				.Where(m => m.Channel == channel)
+				.OrderBy(m => m.Timestamp)
+				.Take(50)
+				.Select(m => new Message /* Exclude Channel */
+				{
+					Id = m.Id,
+					Content = m.Content,
+					Timestamp = m.Timestamp,
+					Deleted = m.Deleted,
+					User = m.User
+				})
+				.ToArrayAsync();
+
+			return messages;
+		}
+
+		public async Task SendMessage(int userId, int channelId, string messageContent)
 		{
 			await VerifyUser(userId);
-			await Clients.All.SendAsync("ReceiveMessage", await GetUser(userId), message);
+
+			Message message = new()
+			{
+				UserId = userId,
+				Timestamp = DateTime.UtcNow,
+				Content = messageContent,
+				Deleted = false,
+				ChannelId = channelId
+			};
+
+			await _chatAppDbCtx.AddAsync(message);
+			await _chatAppDbCtx.SaveChangesAsync();
+
+			await Clients.All.SendAsync($"ReceiveMessage-{channelId}", message);
 		}
 	}
 }

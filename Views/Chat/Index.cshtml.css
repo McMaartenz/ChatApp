@@ -84,6 +84,7 @@
     left: -100%;
     z-index: 2;
     transition: left ease 0.4s;
+    box-shadow: 1px 0 5px -3px black;
 }
 
 #chat-sidebar > div {
@@ -105,6 +106,7 @@
 #chat-sidebar-channels {
     overflow-y: scroll;
     scrollbar-width: thin;
+    height: 100%;
 }
 
 #chat-sidebar-options {

@@ -20,4 +20,18 @@ class ChatMessage extends Template {
     }
 }
 
-window.customElements.define('chat-msg', ChatMessage);
+class ChatChannel extends Template {
+    constructor() {
+        super();
+        this.applyTemplate('chat-channel');
+    }
+}
+
+const customElementsMap = {
+    'chat-msg': ChatMessage,
+    'chat-channel': ChatChannel,
+};
+
+for (const [selector, elementClass] of Object.entries(customElementsMap)) {
+    window.customElements.define(selector, elementClass);
+}

@@ -9,6 +9,10 @@ namespace ChatApp.Data.Entities
 		public string Content { get; set; }
 		public DateTime Timestamp { get; set; }
 		public bool Deleted { get; set; }
+
+		public int UserId { get; set; }
+		public int ChannelId { get; set; }
+
 		public User User { get; set; }
 		public Channel Channel { get; set; }
 	}
