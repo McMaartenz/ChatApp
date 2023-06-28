@@ -18,12 +18,16 @@ namespace ChatApp
             // Add services to the container.
             string connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             string inquiryConnectionString = builder.Configuration.GetConnectionString("InquiryConnection") ?? throw new InvalidOperationException("Connection string 'InquiryConnection' not found.");
+            string chatAppConnectionString = builder.Configuration.GetConnectionString("ChatAppConnection") ?? throw new InvalidOperationException("Connection string 'ChatAppConnection' not found.");
 
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+			builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
             builder.Services.AddDbContext<InquiryDbCtx>(options =>
                 options.UseSqlServer(inquiryConnectionString));
+
+            builder.Services.AddDbContext<ChatAppDbCtx>(options => 
+                options.UseSqlServer(chatAppConnectionString));
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

@@ -3,14 +3,11 @@
 #nullable disable
 namespace ChatApp.Data.Entities
 {
-	public class Inquiry
+	public class Channel
 	{
 		[Key] public int Id { get; set; }
 		public string Topic { get; set; }
-		public string Email { get; set; }
-		public string Message { get; set; }
-		public DateTime Time { get; set; }
+		public ICollection<Message> Messages { get; set; }
 	}
 }
-
 #nullable enable

@@ -15,22 +15,21 @@ const ChatSystem = (() => {
 		$("#chat-sidebar").css('left', `${isSideBarOpen * -100}%`);
 	};
 
-	const Send = (input) => {
+	const Send = async (input) => {
 		if (input == '') {
 			return false;
 		}
 
-		connection.invoke('SendMessage', '__user__', input).catch(function (err) {
+		connection.invoke('SendMessage', await ChatSystem.GetUserId(), input).catch(function (err) {
 			return console.error(err.toString());
 		});
 		
-		AddMessage(input);
 		return true;
 	};
 
-	const AddMessage = (input) => {
+	const AddMessage = (user, input) => {
 		var msg = document.createElement('chat-msg');
-		$(msg.shadowRoot).find('#content').text(input);
+		$(msg.shadowRoot).find('#content').text(`${user} says ${input}`);
 		$('#chat-history').append(msg);
 		$(msg)[0].scrollIntoView();
 	};
@@ -43,39 +42,39 @@ const ChatSystem = (() => {
 		$('#chat-text-send').prop('disabled', true);
 	};
 
-	return { Send, AddMessage, IsSideBarOpen, ToggleSideBar, DisableSend, EnableSend };
+	let userId = null;
+	const GetUserId = async () => {
+		if (userId == null) {
+			try {
+				userId = await connection.invoke('GetUserId');
+			}
+			catch (e) {
+				console.error(e);
+			}
+		}
+		return userId;
+	};
+
+	return { Send, AddMessage, IsSideBarOpen, ToggleSideBar, DisableSend, EnableSend, GetUserId };
 })();
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 ChatSystem.DisableSend();
 
-connection.on("ReceiveMessage", function (user, message) {
-    var li = document.createElement("li");
-    document.getElementById("messagesList").appendChild(li);
-    // We can assign user-supplied strings to an element's textContent because it
-    // is not interpreted as markup. If you're assigning in any other way, you 
-    // should be aware of possible script injection concerns.
-    li.textContent = `${user} says ${message}`;
+connection.on('ReceiveMessage', function (user, message) {
+	ChatSystem.AddMessage(user.userName, message);
 });
 
-connection.start().then(function () {
+connection.start().then(async () => {
 	ChatSystem.EnableSend();
+	console.log('My user id is: ', await ChatSystem.GetUserId());
 }).catch(function (err) {
     return console.error(err.toString());
 });
 
-// $('#chat-text-send').click(function (event) {
-//     var user = document.getElementById("userInput").value;
-//     var message = document.getElementById("messageInput").value;
-//     connection.invoke("SendMessage", user, message).catch(function (err) {
-//         return console.error(err.toString());
-//     });
-//     event.preventDefault();
-// });
-
-$('#chat-text-send').click(() => {
-	if (ChatSystem.Send($('#chat-text-input').val())) {
+$('#chat-text-send').click(async () => {
+	if (await ChatSystem.Send($('#chat-text-input').val())) {
 		$('#chat-text-input').val('');
 	}
 });
