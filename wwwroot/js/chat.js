@@ -291,6 +291,7 @@ const CtxMenu = (() => {
 	};
 
 	const Show = (json) => {
+		RemoveSelection();
 		$('#context-menu-bg').attr('show', '');
 		$('#context-menu').attr('show', '');
 		$('#context-menu').attr('msg', json);
@@ -299,6 +300,13 @@ const CtxMenu = (() => {
 	const GetMsg = () => {
 		return JSON.parse($('#context-menu').attr('msg'));
 	};
+
+	const RemoveSelection = () => {
+		if (window.getSelection) {
+			var selection = window.getSelection();
+			selection.removeAllRanges();
+		}
+	}
 
 	return {
 		Hide,

@@ -241,6 +241,16 @@
 /* END Chat Bottom */
 
 /* START Context Menu */
+#delete-message {
+    color: #FDD;
+}
+
+#copy-channel-id,
+#copy-message-id,
+#copy-user-id {
+    color: #DDF;
+}
+
 #context-menu-bg {
     position: fixed;
     
