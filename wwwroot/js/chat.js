@@ -1,7 +1,8 @@
 ﻿"use strict";
 
 const KEYCODES = {
-	ENTER: 13
+	ENTER: 13,
+	RIGHT_CLICK: 3,
 };
 
 const ChatSystem = (() => {
@@ -44,15 +45,13 @@ const ChatSystem = (() => {
 		sr.find('#content').text(message.content);
 		sr.find('#timestamp').text(new Date(message.timestamp).toLocaleString());
 		sr.find('#view-options').click(() => {
-			$('#phone-context-menu-bg').attr('show', '');
-			$('#phone-context-menu').attr('show', '');
-			$('#phone-context-menu').attr('msg', JSON.stringify(message));
+			CtxMenu.Show(JSON.stringify(message));
 		});
 
 		sr.find('#main').dblclick((e) => {
 			sr.find('#view-options').click();
 			e.preventDefault();
-		})
+		});
 
 		$('#chat-history').append(msg);
 		$(msg)[0].scrollIntoView();
@@ -280,44 +279,51 @@ const CopyToClipboard = (value) => {
 
 const CtxMenu = (() => {
 	const Hide = () => {
-		$('#phone-context-menu-bg').removeAttr('show');
-		$('#phone-context-menu').removeAttr('show');
+		$('#context-menu-bg').removeAttr('show');
+		$('#context-menu').removeAttr('show');
+	};
+
+	const Show = (json) => {
+		$('#context-menu-bg').attr('show', '');
+		$('#context-menu').attr('show', '');
+		$('#context-menu').attr('msg', json);
 	};
 
 	const GetMsg = () => {
-		return JSON.parse($('#phone-context-menu').attr('msg'));
+		return JSON.parse($('#context-menu').attr('msg'));
 	};
 
 	return {
 		Hide,
+		Show,
 		GetMsg
 	};
 })();
 
-$('#phone-context-menu-bg').click(() => {
+$('#context-menu-bg').click(() => {
 	CtxMenu.Hide();
-})
+});
 
 $('#delete-message').click(() => {
 	let msg = CtxMenu.GetMsg();
 	ChatSystem.DeleteMessage(msg.id);
 	CtxMenu.Hide();
-})
+});
 
 $('#copy-channel-id').click(() => {
 	let msg = CtxMenu.GetMsg();
 	CopyToClipboard(msg.channelId);
 	CtxMenu.Hide();
-})
+});
 
 $('#copy-message-id').click(() => {
 	let msg = CtxMenu.GetMsg();
 	CopyToClipboard(msg.id);
 	CtxMenu.Hide();
-})
+});
 
 $('#copy-user-id').click(() => {
 	let msg = CtxMenu.GetMsg();
 	CopyToClipboard(msg.userId);
 	CtxMenu.Hide();
-})
+});

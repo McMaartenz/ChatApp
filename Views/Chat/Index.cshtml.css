@@ -240,14 +240,14 @@
 }
 /* END Chat Bottom */
 
-/* START Phone Context Menu */
+/* START Context Menu */
 @media (min-width: 768px) {
-    #phone-context-menu, #phone-context-menu-bg {
-        display: none!important;
+    #context-menu {
+
     }
 }
 
-#phone-context-menu-bg {
+#context-menu-bg {
     position: fixed;
     
     left: 0;
@@ -262,15 +262,15 @@
     display: none;
 }
 
-#phone-context-menu-bg[show] {
+#context-menu-bg[show] {
     display: initial;
 }
 
-#phone-context-menu[show] {
+#context-menu[show] {
     display: initial;
 }
 
-#phone-context-menu {
+#context-menu {
     position: fixed;
     display: none;
 
@@ -287,14 +287,14 @@
     padding: 5px 0;
 }
 
-#phone-context-menu ul {
+#context-menu ul {
     list-style: none;
     list-style-position: inside;
     padding-left: 0;
 }
 
-#phone-context-menu li {
+#context-menu li {
     padding: 1em 0;
 }
 
-/* END Phone Context Menu */
+/* END Context Menu */
