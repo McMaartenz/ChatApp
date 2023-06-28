@@ -148,6 +148,7 @@ const ChatSystem = (() => {
 			await UpdateChannelList();
 		}
 
+		$('#chat-insert-channels-here').html('');
 		for (const channel of availableChannels) {
 			let channelInfo = await GetChannelInfo(channel);
 
@@ -165,6 +166,7 @@ const ChatSystem = (() => {
 		try {
 			let id = await connection.invoke('CreateChannel', await GetUserId(), topic);
 			await SetCurrentChannel(id);
+			await UpdateChannelList();
 		}
 		catch (e) {
 			console.error(e);
@@ -224,6 +226,11 @@ $('#chat-text-input').on('keypress', (e) => {
 
 $('#chat-create-channel').click(() => {
 	let channelTopic = prompt('Channel topic?', 'C++ is better than Rust');
+	if (channelTopic.length > 36) {
+		alert('The channel topic is too long. Must be less than 36 characters.');
+		return;
+	}
+
 	ChatSystem.CreateChannel(channelTopic);
 });
 

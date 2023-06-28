@@ -2,6 +2,7 @@
 using ChatApp.Data;
 using ChatApp.Data.Entities;
 using ChatApp.Exceptions;
+using Humanizer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -164,7 +165,7 @@ namespace ChatApp.Hubs
 			{
 				UserId = userId,
 				Timestamp = DateTime.UtcNow,
-				Content = messageContent,
+				Content = messageContent.Truncate(255),
 				Deleted = false,
 				ChannelId = channelId
 			};
@@ -181,7 +182,7 @@ namespace ChatApp.Hubs
 
 			Channel channel = new()
 			{
-				Topic = topic,
+				Topic = topic.Truncate(36),
 			};
 
 			await _chatAppDbCtx.AddAsync(channel);
