@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
+using System.Threading.Channels;
+using Channel = ChatApp.Data.Entities.Channel;
 
 namespace ChatApp.Hubs
 {
@@ -150,7 +152,9 @@ namespace ChatApp.Hubs
 					Content = m.Content,
 					Timestamp = m.Timestamp,
 					Deleted = m.Deleted,
-					User = m.User
+					User = m.User,
+					UserId = m.UserId,
+					ChannelId = m.ChannelId
 				})
 				.ToArrayAsync();
 
@@ -174,6 +178,28 @@ namespace ChatApp.Hubs
 			await _chatAppDbCtx.SaveChangesAsync();
 
 			await Clients.All.SendAsync($"ReceiveMessage-{channelId}", message);
+		}
+
+		public async Task<bool> DeleteMessage(int userId, int messageId)
+		{
+			await VerifyUser(userId);
+			
+			Message? msg = await _chatAppDbCtx.Messages.FindAsync(messageId);
+			if (msg is null)
+			{
+				return false;
+			}
+
+			if (msg.UserId != userId)
+			{
+				return false;
+			}
+
+			_chatAppDbCtx.Remove(msg);
+			await _chatAppDbCtx.SaveChangesAsync();
+
+			await Clients.All.SendAsync("DeleteMessage", messageId);
+			return true;
 		}
 
 		public async Task<int> CreateChannel(int userId, string topic)

@@ -31,12 +31,28 @@ const ChatSystem = (() => {
 		return true;
 	};
 
+	const RemoveMessage = (id) => {
+		$(`chat-msg[msg-id=${id}]`).replaceWith('');
+	};
+
 	const AddMessage = (message) => {
 		var msg = document.createElement('chat-msg');
+		$(msg).attr('msg-id', message.id);
 
 		let sr = $(msg.shadowRoot);
 		sr.find('#user').text(message.user.userName);
 		sr.find('#content').text(message.content);
+		sr.find('#timestamp').text(new Date(message.timestamp).toLocaleString());
+		sr.find('#view-options').click(() => {
+			$('#phone-context-menu-bg').attr('show', '');
+			$('#phone-context-menu').attr('show', '');
+			$('#phone-context-menu').attr('msg', JSON.stringify(message));
+		});
+
+		sr.find('#main').dblclick((e) => {
+			sr.find('#view-options').click();
+			e.preventDefault();
+		})
 
 		$('#chat-history').append(msg);
 		$(msg)[0].scrollIntoView();
@@ -167,6 +183,16 @@ const ChatSystem = (() => {
 			let id = await connection.invoke('CreateChannel', await GetUserId(), topic);
 			await SetCurrentChannel(id);
 			await UpdateChannelList();
+			SidebarGone();
+		}
+		catch (e) {
+			console.error(e);
+		}
+	};
+
+	const DeleteMessage = async (id) => {
+		try {
+			await connection.invoke('DeleteMessage', await GetUserId(), id);
 		}
 		catch (e) {
 			console.error(e);
@@ -176,6 +202,7 @@ const ChatSystem = (() => {
 	return {
 		/* ASYNC */ Send,
 		/*       */ AddMessage,
+		/*       */ RemoveMessage,
 		/*       */ IsSideBarOpen,
 		/*       */ ToggleSideBar,
 		/*       */ DisableSend,
@@ -187,6 +214,7 @@ const ChatSystem = (() => {
 		/* ASYNC */ GetChannelInfo,
 		/* ASYNC */ UpdateChannelList,
 		/* ASYNC */ CreateChannel,
+		/* ASYNC */ DeleteMessage,
 	};
 })();
 
@@ -196,6 +224,10 @@ ChatSystem.DisableSend();
 
 connection.on('ReceiveMessage', function (user, message) {
 	ChatSystem.AddMessage(user.userName, message);
+});
+
+connection.on('DeleteMessage', (id) => {
+	ChatSystem.RemoveMessage(id);
 });
 
 connection.start().then(async () => {
@@ -236,4 +268,56 @@ $('#chat-create-channel').click(() => {
 
 $(() => {
 	$('#chat-text-input').focus();
+})
+
+const CopyToClipboard = (value) => {
+	var $temp = $("<input>");
+	$("body").append($temp);
+	$temp.val(value).select();
+	document.execCommand("copy");
+	$temp.remove();
+};
+
+const CtxMenu = (() => {
+	const Hide = () => {
+		$('#phone-context-menu-bg').removeAttr('show');
+		$('#phone-context-menu').removeAttr('show');
+	};
+
+	const GetMsg = () => {
+		return JSON.parse($('#phone-context-menu').attr('msg'));
+	};
+
+	return {
+		Hide,
+		GetMsg
+	};
+})();
+
+$('#phone-context-menu-bg').click(() => {
+	CtxMenu.Hide();
+})
+
+$('#delete-message').click(() => {
+	let msg = CtxMenu.GetMsg();
+	ChatSystem.DeleteMessage(msg.id);
+	CtxMenu.Hide();
+})
+
+$('#copy-channel-id').click(() => {
+	let msg = CtxMenu.GetMsg();
+	CopyToClipboard(msg.channelId);
+	CtxMenu.Hide();
+})
+
+$('#copy-message-id').click(() => {
+	let msg = CtxMenu.GetMsg();
+	CopyToClipboard(msg.id);
+	CtxMenu.Hide();
+})
+
+$('#copy-user-id').click(() => {
+	let msg = CtxMenu.GetMsg();
+	CopyToClipboard(msg.userId);
+	CtxMenu.Hide();
 })

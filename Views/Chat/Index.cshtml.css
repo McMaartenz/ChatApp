@@ -239,3 +239,62 @@
     }
 }
 /* END Chat Bottom */
+
+/* START Phone Context Menu */
+@media (min-width: 768px) {
+    #phone-context-menu, #phone-context-menu-bg {
+        display: none!important;
+    }
+}
+
+#phone-context-menu-bg {
+    position: fixed;
+    
+    left: 0;
+    top: 0;
+
+    width: 100vw;
+    height: 100vh;
+    
+    background-color: black;
+    opacity: 0.1;
+
+    display: none;
+}
+
+#phone-context-menu-bg[show] {
+    display: initial;
+}
+
+#phone-context-menu[show] {
+    display: initial;
+}
+
+#phone-context-menu {
+    position: fixed;
+    display: none;
+
+    left: 25vw;
+    top: 25vh;
+
+    width: 50vw;
+    height: fit-content;
+
+    background-color: #333;
+    box-shadow: 0 0 56px -20px black;
+
+    text-align: center;
+    padding: 5px 0;
+}
+
+#phone-context-menu ul {
+    list-style: none;
+    list-style-position: inside;
+    padding-left: 0;
+}
+
+#phone-context-menu li {
+    padding: 1em 0;
+}
+
+/* END Phone Context Menu */

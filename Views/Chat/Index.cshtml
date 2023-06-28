@@ -76,18 +76,98 @@
 		<input id="chat-text-input" type="text" placeholder="Send a message..." />
 		<button id="chat-text-send" class="btn btn-primary"><i class="fa-regular fa-paper-plane"></i></button>
 	</div>
+	<div id="phone-context-menu-bg"></div>
+	<div id="phone-context-menu">
+		<ul>
+			<li>
+				<a href="#" id="delete-message" class="nav-link text-white">
+					Delete
+				</a>
+			</li>
+			<li>
+				<a href="#" id="copy-channel-id" class="nav-link text-white">
+					Copy Channel ID
+				</a>
+			</li>
+			<li>
+				<a href="#" id="copy-message-id" class="nav-link text-white">
+					Copy Message ID
+				</a>
+			</li>
+			<li>
+				<a href="#" id="copy-user-id" class="nav-link text-white">
+					Copy User ID
+				</a>
+			</li>
+		</ul>
+	</div>
 </div>
 
 <template id="chat-msg">
-	<div>
-		<b id="user" style="text-transform:uppercase;font-size:x-small;"></b>
-		<p id="content" style="margin-top:0;"></p>
+	<div id="main">
+		<div>
+			<b id="user"></b>
+			<p id="content"></p>
+		</div>
+		<div>
+			<i id="timestamp"></i>
+			<button id="view-options">
+				<i class="fa-solid fa-ellipsis-vertical"></i>
+			</button>
+		</div>
 	</div>
+	<style>
+		#main {
+			display: flex;
+			justify-content: space-between;
+		}
+
+		#user {
+			text-transform: uppercase;
+			font-size: x-small;
+		}
+
+		#content {
+			margin-top: 0;
+		}
+
+		#timestamp {
+			color: #444;
+		}
+
+		#view-options {
+			display: none;
+		}
+
+		@@media (min-width: 768px) {
+			#main:hover #view-options i {
+				color: #eee;
+			}
+		
+			#view-options {
+				background-color: transparent;
+				color: transparent;
+
+				display: initial;
+
+				border: none;
+				outline: none;
+
+				width: 16px;
+			}
+
+			#view-options:hover {
+				cursor: pointer;
+			}
+		}
+		</style>
+	<link rel="stylesheet"
+		  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </template>
 <template id="chat-channel">
 	<li>
 		<a id="channel-link" href="#" style="text-decoration-line:none;color:#eee;">
-			<p id="channel-name" style="text-align:center;"></p>
+			<p id="channel-name" style="text-align:center;word-wrap:break-word;"></p>
 		</a>
 	</li>
 </template>"
