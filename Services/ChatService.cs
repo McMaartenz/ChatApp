@@ -12,14 +12,14 @@ namespace ChatApp.Services
 {
 	public class ChatService
 	{
-		private readonly UserManager<ApplicationUser> _userManager;
+		private readonly UserService _userService;
 		private readonly ChatAppDbCtx _chatAppDbCtx;
 
 		public ChatService(
-			UserManager<ApplicationUser> userManager,
+			UserService userService,
 			ChatAppDbCtx chatAppDbCtx)
 		{
-			_userManager = userManager;
+			_userService = userService;
 			_chatAppDbCtx = chatAppDbCtx;
 		}
 
@@ -151,7 +151,7 @@ namespace ChatApp.Services
 			User? user = await _chatAppDbCtx.Users.Where(u => u.UserId == userId).FirstOrDefaultAsync();
 			if (user is null)
 			{
-				ApplicationUser appUser = await _userManager.FindByIdAsync(userId);
+				ApplicationUser appUser = await _userService.Get(userId);
 				string userName = $"{appUser.FirstName}{appUser.LastName}";
 
 				user = new()

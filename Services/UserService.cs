@@ -25,13 +25,9 @@ namespace ChatApp.Services
 			_userManager = userManager;
 		}
 
-		public async Task<User?> GetChatUser(string userIdentifier)
+		public async Task<ApplicationUser> Get(string userId)
 		{
-			User? user = await _chatAppDbCtx.Users
-				.Where(u => u.UserId == userIdentifier)
-				.FirstOrDefaultAsync();
-
-			return user;
+			return await _userManager.FindByIdAsync(userId);
 		}
 	}
 }
