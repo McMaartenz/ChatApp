@@ -59,5 +59,39 @@ namespace Tests
 			// Assert
 			Assert.Null(actual);
 		}
+
+		[Fact]
+		public async Task ReturnsChannels()
+		{
+			// Arrange
+			Channel[] expected =
+			{
+				new() { Id = 1, Topic = "abc" },
+				new() { Id = 2, Topic = "def" },
+				new() { Id = 3, Topic = "ghi" }
+			};
+
+			_mockDataService.Setup(x => x.GetChannelsWithoutMessages()).ReturnsAsync(expected);
+
+			// Act
+			Channel[] actual = await _mockChatService.Object.GetChannels();
+
+			// Assert
+			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
+		public async Task CreatesGeneralChannelIfNoneExists()
+		{
+			// Arrange
+			_mockDataService.Setup(x => x.GetChannelsWithoutMessages()).ReturnsAsync(Array.Empty<Channel>());
+
+			// Act
+			Channel[] actual = await _mockChatService.Object.GetChannels();
+
+			// Assert
+			Assert.NotEmpty(actual);
+			_mockDataService.Verify(x => x.AddChannel(actual[0]), Times.Once);
+		}
 	}
 }
