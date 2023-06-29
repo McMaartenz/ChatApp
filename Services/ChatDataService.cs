@@ -15,12 +15,12 @@ namespace ChatApp.Services
 			_dbCtx = dbCtx;
 		}
 
-		public async Task<Channel?> FindChannelAsync(int channelId)
+		public virtual async Task<Channel?> FindChannelAsync(int channelId)
 		{
 			return await _dbCtx.Channels.FindAsync(channelId);
 		}
 
-		public async Task<Channel[]> GetChannelsWithoutMessages()
+		public virtual async Task<Channel[]> GetChannelsWithoutMessages()
 		{
 			return await _dbCtx.Channels
 				   .Select(c => new Channel
@@ -31,13 +31,13 @@ namespace ChatApp.Services
 				   .ToArrayAsync();
 		}
 
-		public async Task AddChannel(Channel channel)
+		public virtual async Task AddChannel(Channel channel)
 		{
 			await _dbCtx.AddAsync(channel);
 			await _dbCtx.SaveChangesAsync();
 		}
 
-		public async Task<Message[]> GetLastMessages(int channelId, int amount)
+		public virtual async Task<Message[]> GetLastMessages(int channelId, int amount)
 		{
 			return await _dbCtx.Messages
 				.Where(m => m.ChannelId == channelId)
@@ -55,44 +55,44 @@ namespace ChatApp.Services
 				}).ToArrayAsync();
 		}
 
-		public async Task<bool> ChannelExists(int channelId)
+		public virtual async Task<bool> ChannelExists(int channelId)
 		{
 			return await _dbCtx.Channels.AnyAsync(c => c.Id == channelId);
 		}
 
-		public async Task<bool> UserExists(int userId)
+		public virtual async Task<bool> UserExists(int userId)
 		{
 			return await _dbCtx.Users.AnyAsync(u => u.Id == userId);
 		}
 
-		public async Task AddMessage(Message message)
+		public virtual async Task AddMessage(Message message)
 		{
 			await _dbCtx.AddAsync(message);
 			await _dbCtx.SaveChangesAsync();
 		}
 
-		public async Task<Message?> GetMessage(int messageId)
+		public virtual async Task<Message?> GetMessage(int messageId)
 		{
 			return await _dbCtx.Messages.FindAsync(messageId);
 		}
 
-		public async Task RemoveMessage(Message message)
+		public virtual async Task RemoveMessage(Message message)
 		{
 			_dbCtx.Messages.Remove(message);
 			await _dbCtx.SaveChangesAsync();
 		}
 
-		public async Task<User?> GetUser(int userId)
+		public virtual async Task<User?> GetUser(int userId)
 		{
 			return await _dbCtx.Users.FindAsync(userId);
 		}
 
-		public async Task<User?> GetUserFromStringId(string userId)
+		public virtual async Task<User?> GetUserFromStringId(string userId)
 		{
 			return await _dbCtx.Users.Where(u => u.UserId == userId).FirstOrDefaultAsync();
 		}
 
-		public async Task AddUser(User user)
+		public virtual async Task AddUser(User user)
 		{
 			await _dbCtx.Users.AddAsync(user);
 			await _dbCtx.SaveChangesAsync();
