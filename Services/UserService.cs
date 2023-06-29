@@ -8,20 +8,10 @@ namespace ChatApp.Services
 {
 	public class UserService
 	{
-		private readonly ChatAppDbCtx _chatAppDbCtx;
-		private readonly ApplicationDbContext _appDbCtx;
-		protected readonly SignInManager<ApplicationUser> _signInManager;
-		protected readonly UserManager<ApplicationUser> _userManager;
+		private readonly UserManager<ApplicationUser> _userManager;
 
-		public UserService(
-			ChatAppDbCtx chatAppDbCtx,
-			ApplicationDbContext appDbCtx,
-			SignInManager<ApplicationUser> signInManager,
-			UserManager<ApplicationUser> userManager)
+		public UserService(UserManager<ApplicationUser> userManager)
 		{
-			_chatAppDbCtx = chatAppDbCtx;
-			_appDbCtx = appDbCtx;
-			_signInManager = signInManager;
 			_userManager = userManager;
 		}
 
