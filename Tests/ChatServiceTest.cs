@@ -256,5 +256,42 @@ namespace Tests
 			Assert.Equal(0, messageId);
 			_mockDataService.Verify(x => x.AddMessage(message), Times.Never);
 		}
+
+		[Theory]
+		[InlineData(55, 98, true)]
+		[InlineData(55, 99, false)]
+		[InlineData(54, 98, false)]
+		public async Task DeletesMessage(int userId, int messageId, bool expected)
+		{
+			// Arrange
+			_mockDataService.Setup(x => x.RemoveMessage(It.IsAny<Message>())).Returns(Task.CompletedTask);
+			_mockDataService.Setup(x => x.GetMessage(98)).ReturnsAsync(new Message() { UserId = 55 });
+
+			// Act
+			bool actual = await _mockChatService.Object.DeleteMessage(userId, messageId);
+
+			// Assert
+			Assert.Equal(expected, actual);
+			_mockDataService.Verify(x => x.RemoveMessage(It.IsAny<Message>()), expected ? Times.Once : Times.Never);
+		}
+
+		[Fact]
+		public async Task PostsChannel()
+		{
+			// Arrange
+			int expected = 15;
+			_mockDataService.Setup(x => x.AddChannel(It.IsAny<Channel>()))
+				.Returns(Task.CompletedTask)
+				.Callback((Channel channel) =>
+				{
+					channel.Id = expected;
+				});
+
+			// Act
+			int channelId = await _mockChatService.Object.PostChannel("Topic");
+
+			// Assert
+			Assert.Equal(expected, channelId);
+		}
 	}
 }

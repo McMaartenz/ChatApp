@@ -113,7 +113,6 @@ namespace ChatApp.Services
 				Topic = topic
 			};
 
-			// return id?
 			await _dataService.AddChannel(channel);
 			return channel.Id;
 		}
