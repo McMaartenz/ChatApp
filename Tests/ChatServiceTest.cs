@@ -307,5 +307,49 @@ namespace Tests
 			Assert.Equal(0, channelId);
 			_mockDataService.Verify(x => x.AddChannel(It.IsAny<Channel>()), Times.Never);
 		}
+
+		[Fact]
+		public async Task GetsExistingUser()
+		{
+			// Arrange
+			User expected = new()
+			{
+				Id = 5,
+				UserId = "abc",
+				UserName = "janSmit"
+			};
+
+			_mockDataService.Setup(x => x.GetUserFromStringId(expected.UserId)).ReturnsAsync(expected);
+
+			// Act
+			User actual = await _mockChatService.Object.GetUserId(expected.UserId);
+
+			// Assert
+			Assert.Equal(expected, actual);
+			_mockDataService.Verify(x => x.AddUser(It.IsAny<User>()), Times.Never);
+		}
+
+		[Fact]
+		public async Task CreatesNewUserWhenNotExisting()
+		{
+			// Arrange
+			string userId = "abc";
+
+			_mockUserService.Setup(x => x.Get(userId)).ReturnsAsync(new ApplicationUser
+			{
+				FirstName = "john",
+				LastName = "smith"
+			});
+
+			_mockDataService.Setup(x => x.GetUserFromStringId(userId)).ReturnsAsync(null as User);
+			_mockDataService.Setup(x => x.AddUser(It.IsAny<User>())).Returns(Task.CompletedTask);
+
+			// Act
+			User actual = await _mockChatService.Object.GetUserId(userId);
+
+			// Assert
+			Assert.Equal("johnsmith", actual.UserName);
+			_mockDataService.Verify(x => x.AddUser(actual), Times.Once);
+		}
 	}
 }

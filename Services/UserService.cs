@@ -15,7 +15,7 @@ namespace ChatApp.Services
 			_userManager = userManager;
 		}
 
-		public async Task<ApplicationUser> Get(string userId)
+		public virtual async Task<ApplicationUser> Get(string userId)
 		{
 			return await _userManager.FindByIdAsync(userId);
 		}

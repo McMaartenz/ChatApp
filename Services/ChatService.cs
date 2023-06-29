@@ -138,7 +138,6 @@ namespace ChatApp.Services
 					UserId = userId,
 				};
 
-				// return id?
 				await _dataService.AddUser(user);
 			}
 
