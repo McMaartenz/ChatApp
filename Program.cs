@@ -64,6 +64,8 @@ namespace ChatApp
 
             // Chat service
 			builder.Services.AddScoped<ChatService>();
+			builder.Services.AddScoped<UserService>();
+			builder.Services.AddScoped<ChatDataService>();
 
 			var app = builder.Build();
 

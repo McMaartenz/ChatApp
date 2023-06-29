@@ -13,31 +13,25 @@ namespace ChatApp.Services
 	public class ChatService
 	{
 		private readonly UserService _userService;
-		private readonly ChatAppDbCtx _chatAppDbCtx;
+		private readonly ChatDataService _dataService;
 
 		public ChatService(
 			UserService userService,
-			ChatAppDbCtx chatAppDbCtx)
+			ChatDataService dataService)
 		{
+			_dataService = dataService;
 			_userService = userService;
-			_chatAppDbCtx = chatAppDbCtx;
 		}
 
 		public async Task<Channel?> GetChannel(int channelId)
 		{
-			Channel? channel = await _chatAppDbCtx.Channels.FindAsync(channelId);
+			Channel? channel = await _dataService.FindChannelAsync(channelId);
 			return channel;
 		}
 
 		public async Task<Channel[]> GetChannels()
 		{
-			Channel[] channels = await _chatAppDbCtx.Channels
-				.Select(c => new Channel
-				{
-					Id = c.Id,
-					Topic = c.Topic
-				})
-				.ToArrayAsync();
+			Channel[] channels = await _dataService.GetChannelsWithoutMessages();
 
 			if (channels.Length > 0)
 			{
@@ -50,8 +44,8 @@ namespace ChatApp.Services
 				Topic = "General"
 			};
 
-			await _chatAppDbCtx.AddAsync(channel);
-			await _chatAppDbCtx.SaveChangesAsync();
+			// return id?
+			await _dataService.AddChannel(channel);
 
 			channel.Messages = new List<Message>();
 			return new Channel[] { channel };
@@ -59,30 +53,17 @@ namespace ChatApp.Services
 
 		public async Task<Message[]> GetMessages(int channelId, int amount = 50)
 		{
-			return await _chatAppDbCtx.Messages
-				.Where(m => m.ChannelId == channelId)
-				.OrderBy(m => m.Timestamp)
-				.Take(Math.Min(1, Math.Max(128, amount)))
-				.Select(m => new Message
-				{
-					Id = m.Id,
-					Content = m.Content,
-					Timestamp = m.Timestamp,
-					Deleted = m.Deleted,
-					User = m.User,
-					UserId = m.UserId,
-					ChannelId = m.ChannelId
-				}).ToArrayAsync();
+			return await _dataService.GetLastMessages(channelId, Math.Min(1, Math.Max(128, amount)));
 		}
 
 		public async Task<int> PostMessage(Message message)
 		{
-			if (!await _chatAppDbCtx.Channels.AnyAsync(c => c.Id == message.ChannelId))
+			if (!await _dataService.ChannelExists(message.ChannelId))
 			{
 				return 0;
 			}
 
-			if (!await _chatAppDbCtx.Users.AnyAsync(u => u.Id == message.UserId))
+			if (!await _dataService.UserExists(message.UserId))
 			{
 				return 0;
 			}
@@ -100,14 +81,14 @@ namespace ChatApp.Services
 			message.Channel = null;
 			message.User = null;
 
-			await _chatAppDbCtx.AddAsync(message);
-			await _chatAppDbCtx.SaveChangesAsync();
+			// return id?
+			await _dataService.AddMessage(message);
 			return message.Id;
 		}
 
 		public async Task<bool> DeleteMessage(int userId, int messageId)
 		{
-			Message? message = await _chatAppDbCtx.Messages.FindAsync(messageId);
+			Message? message = await _dataService.GetMessage(messageId);
 			if (message is null)
 			{
 				return false;
@@ -118,8 +99,7 @@ namespace ChatApp.Services
 				return false;
 			}
 
-			_chatAppDbCtx.Messages.Remove(message);
-			await _chatAppDbCtx.SaveChangesAsync();
+			await _dataService.RemoveMessage(message);
 			return true;
 		}
 
@@ -135,20 +115,20 @@ namespace ChatApp.Services
 				Topic = topic
 			};
 
-			await _chatAppDbCtx.AddAsync(channel);
-			await _chatAppDbCtx.SaveChangesAsync();
+			// return id?
+			await _dataService.AddChannel(channel);
 			return channel.Id;
 		}
 
 		public async Task<User?> GetUser(int userId)
 		{
-			User? user = await _chatAppDbCtx.Users.FindAsync(userId);
+			User? user = await _dataService.GetUser(userId);
 			return user;
 		}
 
 		public async Task<User> GetUserId(string userId)
 		{
-			User? user = await _chatAppDbCtx.Users.Where(u => u.UserId == userId).FirstOrDefaultAsync();
+			User? user = await _dataService.GetUserFromStringId(userId);
 			if (user is null)
 			{
 				ApplicationUser appUser = await _userService.Get(userId);
@@ -161,8 +141,8 @@ namespace ChatApp.Services
 					UserId = userId,
 				};
 
-				await _chatAppDbCtx.Users.AddAsync(user);
-				await _chatAppDbCtx.SaveChangesAsync();
+				// return id?
+				await _dataService.AddUser(user);
 			}
 
 			return user;
