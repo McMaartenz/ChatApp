@@ -16,7 +16,7 @@ namespace ChatApp.Middlewares
 
         public async Task InvokeAsync(HttpContext ctx)
         {
-            Cookies cookies = new(ctx);
+            CookiesService cookies = new(ctx);
 
             bool useCookies = cookies["gdpr"] == "accept";
             if (useCookies)

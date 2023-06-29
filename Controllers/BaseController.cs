@@ -11,7 +11,7 @@ namespace ChatApp.Controllers
 	{
 		protected readonly SignInManager<ApplicationUser> _signInManager;
 		protected readonly UserManager<ApplicationUser> _userManager;
-		private readonly ILogger<BaseController> _logger;
+		protected readonly ILogger<BaseController> _logger;
 
         public BaseController(
             UserManager<ApplicationUser> userManager,

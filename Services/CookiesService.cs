@@ -1,10 +1,10 @@
 ﻿namespace ChatApp.Services
 {
-    public class Cookies
+    public class CookiesService
     {
         private readonly HttpContext _ctx;
 
-        public Cookies(HttpContext ctx)
+        public CookiesService(HttpContext ctx)
         {
             _ctx = ctx;
         }

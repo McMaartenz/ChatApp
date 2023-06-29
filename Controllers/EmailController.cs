@@ -12,7 +12,6 @@ namespace ChatApp.Controllers
 {
 	public class EmailController : BaseController
 	{
-		private readonly ILogger<EmailController> _logger;
 		private const string ContactPageURL = "~/Views/Home/Contact.cshtml";
 
 		private readonly InquiryDbCtx _inquiryDbCtx;
@@ -25,7 +24,6 @@ namespace ChatApp.Controllers
 			InquiryDbCtx inquiryDbCtx,
 			IMapper mapper) : base(userManager, signInManager, logger)
 		{
-			_logger = logger;
 			_inquiryDbCtx = inquiryDbCtx;
 			_mapper = mapper;
 		}
@@ -62,7 +60,7 @@ namespace ChatApp.Controllers
 					return View(ContactPageURL, inquiry);
 				}
 
-				if (!Captcha.IsValid(inquiry.Captcha))
+				if (!CaptchaService.IsValid(inquiry.Captcha))
 				{
 					TempData["error:captcha"] = "Captcha ontbreekt";
 					return View(ContactPageURL, inquiry);

@@ -3,9 +3,12 @@ using ChatApp.Areas.Identity.Data;
 using ChatApp.Data;
 using ChatApp.Hubs;
 using ChatApp.Middlewares;
+using ChatApp.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using System.Globalization;
+using System.Reflection;
 
 namespace ChatApp
 {
@@ -56,6 +59,12 @@ namespace ChatApp
             // SignalR
 			builder.Services.AddSignalR();
 
+			// Http
+			builder.Services.AddHttpClient();
+
+            // Chat service
+			builder.Services.AddScoped<ChatService>();
+
 			var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -70,7 +79,7 @@ namespace ChatApp
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+			app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();

@@ -70,7 +70,6 @@ namespace ChatApp.Areas.Identity.Pages.Admin
 
             Roles = await UserManager.GetRolesAsync(user);
             return RedirectToPage();
-
         }
     }
 }

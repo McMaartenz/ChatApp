@@ -8,15 +8,12 @@ namespace ChatApp.Controllers
     [Authorize]
     public class ChatController : BaseController
     {
-        private readonly ILogger<ChatController> _logger;
-
         public ChatController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<ChatController> logger)
             : base(userManager, signInManager, logger)
         {
-            _logger = logger;
         }
 
         public IActionResult Index()

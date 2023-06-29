@@ -2,7 +2,7 @@
 
 namespace ChatApp.Services
 {
-	public sealed class Captcha
+	public sealed class CaptchaService
 	{
 		private static readonly HttpClient http = new();
 		private static string SecretKey => Environment.GetEnvironmentVariable("GOOGLE_CAPTCHA_KEY")!;

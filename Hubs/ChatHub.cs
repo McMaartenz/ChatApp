@@ -2,13 +2,17 @@
 using ChatApp.Data;
 using ChatApp.Data.Entities;
 using ChatApp.Exceptions;
+using ChatApp.Services;
 using Humanizer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Immutable;
+using System.Net.Http.Headers;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading.Channels;
 using Channel = ChatApp.Data.Entities.Channel;
 
@@ -16,28 +20,21 @@ namespace ChatApp.Hubs
 {
 	public class ChatHub : Hub
 	{
-		private readonly UserManager<ApplicationUser> _userManager;
-		private readonly SignInManager<ApplicationUser> _signInManager;
-		private readonly ChatAppDbCtx _chatAppDbCtx;
 		private readonly ILogger<ChatHub> _logger;
+		private readonly HttpClient _http;
 
-		private readonly IMemoryCache _cache;
+		private readonly string _baseUrl = "https://localhost:7290/api/ChatApi/"; // or: http://localhost:5246
 
 		public ChatHub(
-			UserManager<ApplicationUser> userManager,
-			SignInManager<ApplicationUser> signInManager,
-			ChatAppDbCtx chatAppDbCtx,
 			ILogger<ChatHub> logger,
-			IMemoryCache memoryCache)
+			HttpClient http)
 		{
-			_userManager = userManager;
-			_signInManager = signInManager;
-			_chatAppDbCtx = chatAppDbCtx;
 			_logger = logger;
-			_cache = memoryCache;
+			_http = http;
+			_http.BaseAddress = new Uri(_baseUrl);
+			_http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("APIKey", "ca798148-9038-402a-95c7-c7905e694270");
 		}
 
-		/* Throws AuthenticationException on failure */
 		private async Task VerifyUser(int userId)
 		{
 			if (Context.UserIdentifier is null)
@@ -45,7 +42,7 @@ namespace ChatApp.Hubs
 				throw new AuthenticationException();
 			}
 
-			User? user = await _chatAppDbCtx.Users.FindAsync(userId) ?? throw new AuthenticationException();
+			User? user = await GetUser(userId) ?? throw new AuthenticationException();
 			if (user.UserId != Context.UserIdentifier)
 			{
 				throw new AuthenticationException();
@@ -59,105 +56,62 @@ namespace ChatApp.Hubs
 				return -1;
 			}
 
-			User? user = await _chatAppDbCtx.Users.Where(u => u.UserId == Context.UserIdentifier).FirstOrDefaultAsync();
-			if (user is null)
-			{
-				ApplicationUser appUser = await _userManager.FindByIdAsync(Context.UserIdentifier);
-				string userName = $"{appUser.FirstName}{appUser.LastName}";
-
-				user = new()
-				{
-					Timestamp = DateTime.UtcNow,
-					UserName = userName,
-					UserId = Context.UserIdentifier,
-				};
-
-				await _chatAppDbCtx.Users.AddAsync(user);
-				await _chatAppDbCtx.SaveChangesAsync();
-			}
-
-			return user.Id;
+			int userId = await Get<int>($"users/{Context.UserIdentifier}/id");
+			return userId;
 		}
 
 		public async Task<User?> GetUser(int userId)
 		{
-			string cacheKey = $"userId_{userId}";
-
-			if (_cache.TryGetValue(cacheKey, out User cachedUser))
-			{
-				return cachedUser;
-			}
-
-			User? user = await _chatAppDbCtx.Users.FindAsync(userId);
-			if (user is not null)
-			{
-				_cache.Set(cacheKey, user, TimeSpan.FromMinutes(10));
-			}
-
+			User? user = await Get<User>($"users/{userId}");
 			return user;
+		}
+
+		private async Task<T?> Get<T>(string route)
+		{
+			HttpResponseMessage response = await _http.GetAsync(route);
+			response.EnsureSuccessStatusCode();
+
+			T? entities = await response.Content.ReadFromJsonAsync<T>();
+			return entities;
+		}
+
+		private async Task<int?> Post<T>(string route, T entity)
+		{
+			HttpResponseMessage response = await _http.PostAsJsonAsync(route, entity);
+			response.EnsureSuccessStatusCode();
+
+			try
+			{
+				int result = await response.Content.ReadFromJsonAsync<int>();
+				return result;
+			}
+			catch
+			{
+				return null;
+			}
+		}
+
+		private async Task Delete(string route)
+		{
+			HttpResponseMessage response = await _http.DeleteAsync(route);
+			response.EnsureSuccessStatusCode();
 		}
 
 		public async Task<int[]> GetChannels()
 		{
-			int[] channels = await _chatAppDbCtx.Channels.Select(c => c.Id).ToArrayAsync();
-			if (channels.Length > 0)
-			{
-				return channels;
-			}
-
-			Channel channel = new()
-			{
-				Topic = "General"
-			};
-
-			await _chatAppDbCtx.AddAsync(channel);
-			await _chatAppDbCtx.SaveChangesAsync();
-
-			return new int[] { channel.Id };
+			Channel[] channels = await Get<Channel[]>("channels") ?? Array.Empty<Channel>();
+			return channels.Select(c => c.Id).ToArray();
 		}
 
 		public async Task<Channel?> GetChannel(int channelId)
 		{
-			string cacheKey = $"channelId_{channelId}";
-
-			if (_cache.TryGetValue(cacheKey, out Channel cachedChannel))
-			{
-				return cachedChannel;
-			}
-
-			Channel? channel = await _chatAppDbCtx.Channels.FindAsync(channelId);
-			if (channel is not null)
-			{
-				_cache.Set(cacheKey, channel, TimeSpan.FromMinutes(10));
-			}
-
+			Channel? channel = await Get<Channel>($"channels/{channelId}");
 			return channel;
 		}
 
 		public async Task<Message[]> GetLastMessages(int channelId)
 		{
-			Channel? channel = await _chatAppDbCtx.Channels.FindAsync(channelId);
-			if (channel is null)
-			{
-				return Array.Empty<Message>();
-			}
-
-			Message[] messages = await _chatAppDbCtx.Messages
-				.Where(m => m.Channel == channel)
-				.OrderBy(m => m.Timestamp)
-				.Take(50)
-				.Select(m => new Message /* Exclude Channel */
-				{
-					Id = m.Id,
-					Content = m.Content,
-					Timestamp = m.Timestamp,
-					Deleted = m.Deleted,
-					User = m.User,
-					UserId = m.UserId,
-					ChannelId = m.ChannelId
-				})
-				.ToArrayAsync();
-
+			Message[] messages = await Get<Message[]>($"channels/{channelId}/messages") ?? Array.Empty<Message>();
 			return messages;
 		}
 
@@ -167,37 +121,26 @@ namespace ChatApp.Hubs
 
 			Message message = new()
 			{
+				User = await GetUser(userId) ?? throw new AuthenticationException(),
 				UserId = userId,
 				Timestamp = DateTime.UtcNow,
 				Content = messageContent.Truncate(255),
 				Deleted = false,
-				ChannelId = channelId
+				ChannelId = channelId,
+				Channel = await GetChannel(channelId) ?? throw new InvalidChannelException()
 			};
 
-			await _chatAppDbCtx.AddAsync(message);
-			await _chatAppDbCtx.SaveChangesAsync();
-
+			int? messageId = await Post("messages", message);
+			message.Id = (int)messageId;
+			
 			await Clients.All.SendAsync($"ReceiveMessage-{channelId}", message);
 		}
 
 		public async Task<bool> DeleteMessage(int userId, int messageId)
 		{
 			await VerifyUser(userId);
-			
-			Message? msg = await _chatAppDbCtx.Messages.FindAsync(messageId);
-			if (msg is null)
-			{
-				return false;
-			}
 
-			if (msg.UserId != userId)
-			{
-				return false;
-			}
-
-			_chatAppDbCtx.Remove(msg);
-			await _chatAppDbCtx.SaveChangesAsync();
-
+			await Delete($"messages/{userId}/{messageId}");
 			await Clients.All.SendAsync("DeleteMessage", messageId);
 			return true;
 		}
@@ -206,15 +149,8 @@ namespace ChatApp.Hubs
 		{
 			await VerifyUser(userId);
 
-			Channel channel = new()
-			{
-				Topic = topic.Truncate(36),
-			};
-
-			await _chatAppDbCtx.AddAsync(channel);
-			await _chatAppDbCtx.SaveChangesAsync();
-
-			return channel.Id;
+			int? channelId = await Post("channels", topic);
+			return (int)channelId;
 		}
 	}
 }
