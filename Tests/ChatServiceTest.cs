@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using System.Runtime.CompilerServices;
 using Xunit;
 
 namespace Tests
@@ -92,6 +93,52 @@ namespace Tests
 			// Assert
 			Assert.NotEmpty(actual);
 			_mockDataService.Verify(x => x.AddChannel(actual[0]), Times.Once);
+		}
+
+		[Theory]
+		[InlineData(-5, 1)]
+		[InlineData(5, 5)]
+		[InlineData(50, 50)]
+		[InlineData(255, 128)]
+		public async Task GetsMessages(int amount, int expected)
+		{
+			// Arrange
+			_mockDataService.Setup(x => x.GetLastMessages(1, It.IsAny<int>())).ReturnsAsync(Array.Empty<Message>());
+
+			// Act
+			_ = await _mockChatService.Object.GetMessages(1, amount);
+
+			// Assert
+			_mockDataService.Verify(x => x.GetLastMessages(1, expected), Times.Once);
+		}
+
+		[Fact]
+		public async Task CanPostMessage()
+		{
+			// Arrange
+			Message message = new()
+			{
+				Id = 0,
+				UserId = 255,
+				ChannelId = 128,
+				Content = "Hallo",
+				Timestamp = DateTime.UtcNow,
+			};
+
+			_mockDataService.Setup(x => x.AddMessage(message)).Returns(Task.CompletedTask).Callback((Message msg) =>
+			{
+				msg.Id = 513;
+			});
+
+			_mockDataService.Setup(x => x.ChannelExists(128)).ReturnsAsync(true);
+			_mockDataService.Setup(x => x.UserExists(255)).ReturnsAsync(true);
+
+			// Act
+			int messageId = await _mockChatService.Object.PostMessage(message);
+
+			// Assert
+			Assert.Equal(513, messageId);
+			_mockDataService.Verify(x => x.AddMessage(message), Times.Once);
 		}
 	}
 }

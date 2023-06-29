@@ -44,7 +44,6 @@ namespace ChatApp.Services
 				Topic = "General"
 			};
 
-			// return id?
 			await _dataService.AddChannel(channel);
 
 			channel.Messages = new List<Message>();
@@ -53,7 +52,7 @@ namespace ChatApp.Services
 
 		public async Task<Message[]> GetMessages(int channelId, int amount = 50)
 		{
-			return await _dataService.GetLastMessages(channelId, Math.Min(1, Math.Max(128, amount)));
+			return await _dataService.GetLastMessages(channelId, Math.Max(1, Math.Min(128, amount)));
 		}
 
 		public async Task<int> PostMessage(Message message)
@@ -81,7 +80,6 @@ namespace ChatApp.Services
 			message.Channel = null;
 			message.User = null;
 
-			// return id?
 			await _dataService.AddMessage(message);
 			return message.Id;
 		}
