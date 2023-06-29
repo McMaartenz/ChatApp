@@ -293,5 +293,19 @@ namespace Tests
 			// Assert
 			Assert.Equal(expected, channelId);
 		}
+
+		[Fact]
+		public async Task DeniesTooLongChannelTopic()
+		{
+			// Arrange
+			string topicName = new('x', 40);
+
+			// Act
+			int channelId = await _mockChatService.Object.PostChannel(topicName);
+
+			// Assert
+			Assert.Equal(0, channelId);
+			_mockDataService.Verify(x => x.AddChannel(It.IsAny<Channel>()), Times.Never);
+		}
 	}
 }
