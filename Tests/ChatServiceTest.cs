@@ -140,5 +140,63 @@ namespace Tests
 			Assert.Equal(513, messageId);
 			_mockDataService.Verify(x => x.AddMessage(message), Times.Once);
 		}
+
+		[Fact]
+		public async Task DeniesMessageWithNonExistingChannel()
+		{
+			// Arrange
+			Message message = new()
+			{
+				Id = 0,
+				UserId = 255,
+				ChannelId = 9999,
+				Content = "Hallo",
+				Timestamp = DateTime.UtcNow,
+			};
+
+			_mockDataService.Setup(x => x.AddMessage(message)).Returns(Task.CompletedTask).Callback((Message msg) =>
+			{
+				msg.Id = 513;
+			});
+
+			_mockDataService.Setup(x => x.ChannelExists(128)).ReturnsAsync(true);
+			_mockDataService.Setup(x => x.UserExists(255)).ReturnsAsync(true);
+
+			// Act
+			int messageId = await _mockChatService.Object.PostMessage(message);
+
+			// Assert
+			Assert.Equal(0, messageId);
+			_mockDataService.Verify(x => x.AddMessage(message), Times.Never);
+		}
+
+		[Fact]
+		public async Task DeniesMessageWithNonExistingUser()
+		{
+			// Arrange
+			Message message = new()
+			{
+				Id = 0,
+				UserId = 9999,
+				ChannelId = 128,
+				Content = "Hallo",
+				Timestamp = DateTime.UtcNow,
+			};
+
+			_mockDataService.Setup(x => x.AddMessage(message)).Returns(Task.CompletedTask).Callback((Message msg) =>
+			{
+				msg.Id = 513;
+			});
+
+			_mockDataService.Setup(x => x.ChannelExists(128)).ReturnsAsync(true);
+			_mockDataService.Setup(x => x.UserExists(255)).ReturnsAsync(true);
+
+			// Act
+			int messageId = await _mockChatService.Object.PostMessage(message);
+
+			// Assert
+			Assert.Equal(0, messageId);
+			_mockDataService.Verify(x => x.AddMessage(message), Times.Never);
+		}
 	}
 }
