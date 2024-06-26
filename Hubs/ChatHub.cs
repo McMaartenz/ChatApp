@@ -23,7 +23,7 @@ namespace ChatApp.Hubs
 		private readonly ILogger<ChatHub> _logger;
 		private readonly HttpClient _http;
 
-		private readonly string _baseUrl = "https://localhost:7290/api/ChatApi/"; // or: http://localhost:5246
+		private readonly string _baseUrl = "https://localhost:6009/api/ChatApi/"; // or: http://localhost:5000
 
 		public ChatHub(
 			ILogger<ChatHub> logger,
