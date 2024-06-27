@@ -73,7 +73,7 @@ namespace ChatApp.Areas.Identity.Pages.Account
                     values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                     protocol: Request.Scheme)
 
-                    .Replace("localhost:6009", "https://komputertje.hbo-ict.org");
+                    .Replace("localhost:6009", "komputertje.hbo-ict.org");
             }
 
             return Page();
