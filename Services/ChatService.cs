@@ -14,16 +14,13 @@ namespace ChatApp.Services
 	{
 		private readonly UserService _userService;
 		private readonly ChatDataService _dataService;
-		private readonly IHttpContextAccessor _context;
 
 		public ChatService(
-			IHttpContextAccessor context,
 			UserService userService,
 			ChatDataService dataService)
 		{
 			_dataService = dataService;
 			_userService = userService;
-			_context = context;
 		}
 
 		public async Task<Channel?> GetChannel(int channelId)
@@ -87,14 +84,14 @@ namespace ChatApp.Services
 			return message.Id;
 		}
 
-		private bool IsAdministrator()
+		private async Task<bool> IsAdministrator(string userId)
 		{
-			return _context.HttpContext?.User.IsInRole("Administrator") ?? false;
+			return await _userService.HasRole(userId, "Administrator");
 		}
 
-		private bool IsChatModerator()
+		private async Task<bool> IsChatModerator(string userId)
 		{
-			return _context.HttpContext?.User.IsInRole("ChatModerator") ?? false;
+			return await _userService.HasRole(userId, "ChatModerator");
 		}
 
 		public async Task<bool> DeleteMessage(int userId, int messageId)
@@ -105,7 +102,8 @@ namespace ChatApp.Services
 				return false;
 			}
 
-			bool hasModerativePowers = IsChatModerator() || IsAdministrator();
+			string userIdStr = userId.ToString();
+			bool hasModerativePowers = await IsChatModerator(userIdStr) || await IsAdministrator(userIdStr);
 			bool originalSender = message.UserId == userId;
 
 			if (!hasModerativePowers && !originalSender)

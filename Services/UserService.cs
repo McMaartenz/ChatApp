@@ -19,5 +19,16 @@ namespace ChatApp.Services
 		{
 			return await _userManager.FindByIdAsync(userId);
 		}
+
+		public virtual async Task<bool> HasRole(string userId, string role)
+		{
+			ApplicationUser appUser = await Get(userId);
+			if (appUser == null)
+			{
+				return false;
+			}
+
+			return await _userManager.IsInRoleAsync(appUser, role);
+		}
 	}
 }
