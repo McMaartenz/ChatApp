@@ -61,6 +61,7 @@ namespace ChatApp
 
 			// Http
 			builder.Services.AddHttpClient();
+            builder.Services.AddHttpContextAccessor();
 
             // Chat service
 			builder.Services.AddScoped<ChatService>();
