@@ -8,7 +8,7 @@
         "GOOGLE_CAPTCHA_KEY": "6LfyywMqAAAAAIYxun7CvLO0AdBLYo2du9ozwXI-"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:6009;http://localhost:5000"
+      "applicationUrl": "https://komputertje.hbo-ict.org:6009;http://localhost:5000"
     },
     "IIS Express": {
       "commandName": "IISExpress",
