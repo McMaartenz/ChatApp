@@ -18,6 +18,7 @@
         {
             _ctx.Response.Cookies.Append(name, value, new CookieOptions
             {
+                HttpOnly = true,
                 Expires = expires ?? DateTimeOffset.Now.AddDays(1)
             });
         }
