@@ -84,6 +84,16 @@ namespace ChatApp.Services
 			return message.Id;
 		}
 
+		private async Task<bool> IsAdministrator(string userId)
+		{
+			return await _userService.HasRole(userId, "Administrator");
+		}
+
+		private async Task<bool> IsChatModerator(string userId)
+		{
+			return await _userService.HasRole(userId, "ChatModerator");
+		}
+
 		public async Task<bool> DeleteMessage(int userId, int messageId)
 		{
 			Message? message = await _dataService.GetMessage(messageId);
@@ -92,7 +102,11 @@ namespace ChatApp.Services
 				return false;
 			}
 
-			if (message.UserId != userId)
+			string userIdStr = userId.ToString();
+			bool hasModerativePowers = await IsChatModerator(userIdStr) || await IsAdministrator(userIdStr);
+			bool originalSender = message.UserId == userId;
+
+			if (!hasModerativePowers && !originalSender)
 			{
 				return false;
 			}
