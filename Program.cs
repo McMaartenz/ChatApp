@@ -90,10 +90,10 @@ namespace ChatApp
             app.UseAuthentication();
             app.UseAuthorization();
 
-            // nosniff header
             app.Use(async (context, next) =>
             {
                 context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                context.Response.Headers.Add("Strict-Transport-Security", "max-age=15724800; includeSubdomains");
                 await next();
             });
 
