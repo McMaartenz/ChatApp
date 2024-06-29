@@ -263,6 +263,15 @@ input, textarea {
     }
 }
 
+/* chat page */
 .sidebar-entry > i {
     color: #eee;
+}
+
+#chat-header-return > i {
+    color: #eee;
+}
+
+#chat-create-channel > div > i {
+    color: #dfd;
 }

@@ -1,0 +1,9 @@
+﻿#channel-link {
+    text-decoration-line: none;
+    color: #eee;
+}
+
+#channel-name {
+    text-align: center;
+    word-wrap: break-word;
+}
