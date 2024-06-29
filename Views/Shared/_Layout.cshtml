@@ -2,16 +2,30 @@
     bool isAdmin = true;
 }
 
+@inject IHostEnvironment Env
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @if (!Env.IsDevelopment())
+    {
+        <meta http-equiv="content-security-policy"
+            content="base-uri 'self';
+                     default-src 'self';
+                     img-src data: https:;
+                     object-src 'none';
+                     script-src 'self';
+                     style-src 'self';
+                     connect-src http://komputertje.hbo-ict.org https://komputertje.hbo-ict.org wss://komputertje.hbo-ict.org;
+                     upgrade-insecure-requests;" />
+    }
     <title>@ViewData["Title"] - ChatApp</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ChatApp.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css">
+    <link rel="stylesheet" href="~/css/devicon.min.css">
 </head>
 <body>
     <header>

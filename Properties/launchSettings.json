@@ -4,7 +4,6 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
         "GOOGLE_CAPTCHA_KEY": "6LfyywMqAAAAAIYxun7CvLO0AdBLYo2du9ozwXI-"
       },
       "dotnetRunMessages": true,
