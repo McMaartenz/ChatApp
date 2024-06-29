@@ -20,7 +20,8 @@
             {
                 HttpOnly = true,
                 Expires = expires ?? DateTimeOffset.Now.AddDays(1),
-                SameSite = SameSiteMode.Strict
+                SameSite = SameSiteMode.Strict,
+                Secure = true
             });
         }
     }
