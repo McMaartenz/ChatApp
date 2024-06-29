@@ -342,3 +342,12 @@ $('#copy-user-id').click(() => {
 	CopyToClipboard(msg.userId);
 	CtxMenu.Hide();
 });
+
+/* Chat Bottom */
+
+/* Chat Sidebar */
+
+/* Chat Header */
+$('#chat-header-return').click(() => {
+	ChatSystem.ToggleSideBar();
+})

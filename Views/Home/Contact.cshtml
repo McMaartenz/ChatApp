@@ -8,22 +8,7 @@
 
 @section scripts {
 	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
-	<script>
-		function setRecaptchaResponse() {
-			let response = grecaptcha.getResponse();
-			let el = document.getElementById('g-recaptcha-response');
-			el.value = response;
-			el.name = 'Captcha';
-
-			return response !== "";
-		}
-
-		$(() => {
-			$('input#topic').val('@(Model?.Topic ?? "")');
-			$('input#email').val('@email');
-			$('textarea#message').text('@(Model?.Message ?? "")');
-			$('#contact').submit(return setRecaptchaResponse());
-		})
+    <script src="~/js/contact.js"></script>
 	</script>
 }
 
