@@ -9,6 +9,6 @@
 
 $(() => {
 	$('#contact').on('submit', (event) => {
-		setRecaptchaResponse());
+		setRecaptchaResponse();
 	});
 })
