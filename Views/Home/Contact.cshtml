@@ -22,11 +22,12 @@
 			$('input#topic').val('@(Model?.Topic ?? "")');
 			$('input#email').val('@email');
 			$('textarea#message').text('@(Model?.Message ?? "")');
+			$('#contact').submit(return setRecaptchaResponse());
 		})
 	</script>
 }
 
-@using (Html.BeginForm("Send", "Email", FormMethod.Post, new { @id = "contact", @onsubmit = "return setRecaptchaResponse();" }))
+@using (Html.BeginForm("Send", "Email", FormMethod.Post, new { @id = "contact" }))
 {
 	@Html.AntiForgeryToken()
 	<h1>Neem contact met Maarten op</h1>
