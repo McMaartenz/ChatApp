@@ -94,6 +94,7 @@ namespace ChatApp
             {
                 context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
                 context.Response.Headers.Add("Strict-Transport-Security", "max-age=15724800; includeSubdomains");
+                context.Response.Headers.Add("X-Frame-Options", "DENY");
                 await next();
             });
 
