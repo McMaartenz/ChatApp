@@ -1,0 +1,40 @@
+﻿#main {
+    display: flex;
+    justify-content: space-between;
+}
+
+#user {
+    text-transform: uppercase;
+    font-size: x-small;
+}
+
+#content {
+    margin-top: 0;
+}
+
+#timestamp {
+    color: #444;
+}
+
+#view-options {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    #main:hover #view-options i {
+        color: #eee;
+    }
+
+    #view-options {
+        background-color: transparent;
+        color: transparent;
+        display: initial;
+        border: none;
+        outline: none;
+        width: 16px;
+    }
+
+    #view-options:hover {
+        cursor: pointer;
+    }
+}
