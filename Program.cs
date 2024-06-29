@@ -83,7 +83,13 @@ namespace ChatApp
             }
 
 			// app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    ctx.Context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                }
+            });
 
             app.UseRouting();
             
