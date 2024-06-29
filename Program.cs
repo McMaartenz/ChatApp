@@ -5,6 +5,7 @@ using ChatApp.Hubs;
 using ChatApp.Middlewares;
 using ChatApp.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Globalization;
@@ -65,7 +66,7 @@ namespace ChatApp
             // Chat service
 			builder.Services.AddScoped<ChatService>();
 			builder.Services.AddScoped<UserService>();
-			builder.Services.AddScoped<ChatDataService>();
+            builder.Services.AddScoped<ChatDataService>();
 
 			var app = builder.Build();
 
@@ -88,6 +89,13 @@ namespace ChatApp
             
             app.UseAuthentication();
             app.UseAuthorization();
+
+            // nosniff header
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                await next();
+            });
 
             // Monitor request count using a middleware
             app.UseMiddleware<RequestCountMiddleware>();
