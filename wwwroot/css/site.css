@@ -262,3 +262,7 @@ input, textarea {
         height: 3rem;
     }
 }
+
+.sidebar-entry > i {
+    color: #eee;
+}
