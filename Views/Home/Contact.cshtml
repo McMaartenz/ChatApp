@@ -9,7 +9,6 @@
 @section scripts {
 	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="~/js/contact.js"></script>
-	</script>
 }
 
 @using (Html.BeginForm("Send", "Email", FormMethod.Post, new { @id = "contact" }))
@@ -27,19 +26,19 @@
 	<div id="inputs">
 		<label for="topic">Onderwerp:</label>
 		<div>
-			<input type="text" id="topic" name="Topic" placeholder="Typ een onderwerp...">
+			<input type="text" id="topic" name="Topic" placeholder="Typ een onderwerp..." value=@(Model?.Topic ?? "")>
 			<span class="error">@(TempData["error:topic"] ?? "")</span>
 		</div>
 
 		<label for="email">Email:</label>
 		<div>
-			<input type="email" id="email" name="Email" placeholder="example@domain.com">
+			<input type="email" id="email" name="Email" placeholder="example@domain.com" value=@email>
 			<span class="error">@(TempData["error:email"] ?? "")</span>
 		</div>
 
 		<label for="message">Bericht:</label>
 		<div>
-			<textarea id="message" name="Message" rows="9" placeholder="Typ een bericht..."></textarea>
+			<textarea id="message" name="Message" rows="9" placeholder="Typ een bericht..." value=@(Model?.Message ?? "")></textarea>
 			<span class="error">@(TempData["error:message"] ?? "")</span>
 		</div>
 
