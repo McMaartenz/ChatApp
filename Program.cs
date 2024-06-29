@@ -100,6 +100,8 @@ namespace ChatApp
                 context.Response.Headers.Add("Access-Control-Allow-Origin", "https://cdnjs.cloudflare.com");
                 context.Response.Headers.Add("Access-Control-Allow-Methods", "GET");
                 context.Response.Headers.Add("Access-Control-Allow-Headers", "X-PINGOTHER, Content-Type");
+
+                context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
                 await next();
             });
 
