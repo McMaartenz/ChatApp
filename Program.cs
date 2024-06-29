@@ -88,6 +88,7 @@ namespace ChatApp
                 OnPrepareResponse = ctx =>
                 {
                     ctx.Context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                    ctx.Context.Response.Headers.Add("Strict-Transport-Security", "max-age=15724800; includeSubdomains");
                 }
             });
 
