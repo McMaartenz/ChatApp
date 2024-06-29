@@ -95,6 +95,11 @@ namespace ChatApp
                 context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
                 context.Response.Headers.Add("Strict-Transport-Security", "max-age=15724800; includeSubdomains");
                 context.Response.Headers.Add("X-Frame-Options", "DENY");
+
+                // CORS
+                context.Response.Headers.Add("Access-Control-Allow-Origin", "https://cdnjs.cloudflare.com");
+                context.Response.Headers.Add("Access-Control-Allow-Methods", "GET");
+                context.Response.Headers.Add("Access-Control-Allow-Headers", "X-PINGOTHER, Content-Type");
                 await next();
             });
 
